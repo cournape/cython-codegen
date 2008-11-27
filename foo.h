@@ -3,6 +3,10 @@
 
 typedef int foo_int32_t;
 
+/* To test 'recursive' typdefs */
+typedef foo_int32_t foo2_int32_t;
+typedef foo2_int32_t foo3_int32_t;
+
 double foo(double a);
 float foof(float a);
 long double fool(long double a);
@@ -29,6 +33,13 @@ struct yoyo {
 
 /* try opaque structure */
 struct yoyo2;
+
+/* try inner structure */
+struct yoyo3 {
+        struct yoyo2;
+        int a;
+        double b;
+};
 
 void mega_struct_foo(struct yoyo*);
 void mega_struct_foo2(struct yoyo2*);
