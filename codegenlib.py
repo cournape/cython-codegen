@@ -34,7 +34,8 @@ def parse_type(tp):
         else:
             return parse_type(tp.typ) + '*'
     elif isinstance(tp, typedesc.CvQualifiedType):
-        return 'const ' + parse_type(tp.typ)
+        #return 'const ' + parse_type(tp.typ)
+        return parse_type(tp.typ)
     elif isinstance(tp, typedesc.Typedef):
         return tp.name
     elif isinstance(tp, typedesc.Structure):
