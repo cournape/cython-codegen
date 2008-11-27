@@ -21,9 +21,16 @@ enum FOO2 {
         FOO2_ENUM2
 } foo2;
 
+/* try full structure (public members) */
 struct yoyo {
         int a;
         double b;
 };
+
+/* try opaque structure */
+struct yoyo2;
+
+void mega_struct_foo(struct yoyo*);
+void mega_struct_foo2(struct yoyo2*);
 
 #endif

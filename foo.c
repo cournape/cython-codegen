@@ -29,3 +29,8 @@ void mega_foo3(const int *a)
 {
         (void)a;
 }
+
+void mega_struct_foo(struct yoyo* a)
+{
+        (void)a;
+}
