@@ -36,6 +36,32 @@ class LibrarySymbols:
         except AttributeError:
             return False
 
+def typedef_decl(tp):
+    return "typedef %s %s" % (tp.typ.name, tp.name)
+# Is declaration/definition the same for typedefs ?
+typedef_def = typedef_decl
+
+def struct_decl(tp):
+    return "struct %s" % tp.name
+
+def struct_def(tp):
+    output = ['struct %s:' % tp.name]
+    for f in tp.members:
+        if isinstance(f, typedesc.Field):
+            output.append("    %s %s" % (generic_decl(f.typ), f.name))
+        elif isinstance(f, typedesc.Structure):
+            output.append("    %s" % generic_decl(f))
+    if not tp.members:
+        output.append("    pass")
+    return "\n".join(output)
+
+def generic_decl(tp):
+    if isinstance(tp, typedesc.Typedef):
+        return typedef_decl(tp)
+    elif isinstance(tp, typedesc.Structure):
+        return struct_decl(tp)
+    elif isinstance(tp, typedesc.FundamentalType):
+        return tp.name
 
 items = parse(xml_name)
 syms = LibrarySymbols(so_name)
@@ -64,13 +90,13 @@ for k in keep:
     elif isinstance(k, typedesc.Enumeration):
         enums.append(k)
     elif isinstance(k, typedesc.Typedef):
-        tpdefs[k.name] = parse_type(k.typ)
+        tpdefs[k.name] = k
         #print '%s %s %s' % ('typedef', k.name, parse_type(k.typ))
     elif isinstance(k, typedesc.Structure):
         #print 'struct: %s' % k.name
         #for f in k.members:
         #    print '\t' + f.name + ': ' + parse_type(f.typ)
-        structs[k.name] = k.members
+        structs[k.name] = k
     elif isinstance(k, typedesc.Variable):
         #print 'struct: %s' % k.name
         #for f in k.members:
@@ -101,8 +127,14 @@ def codegen(decls):
     output.append('cdef extern from "%s":' % header_name)
     indent = '    '
     for d in decls.values():
-        output.append(indent + d.signature())
+        if isinstance(d, Func):
+            output.append(indent + d.signature())
+        elif isinstance(d, typedesc.Typedef):
+            output.append(indent + typedef_decl(d))
+        else:
+            print "Not handled: %s" % d
 
     print '\n'.join(output)
 
 codegen(funcs)
+codegen(tpdefs)
