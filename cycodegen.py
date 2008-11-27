@@ -37,14 +37,25 @@ class LibrarySymbols:
             return False
 
 def typedef_decl(tp):
-    return "typedef %s %s" % (tp.typ.name, tp.name)
+    if not isinstance(tp.typ, typedesc.PointerType):
+        return "typedef %s %s" % (tp.typ.name, tp.name)
+    else:
+        return "typedef %s" % (pointer_decl(tp.typ) % tp.name)
+
 # Is declaration/definition the same for typedefs ?
 typedef_def = typedef_decl
+
+def pointer_decl(tp):
+    if isinstance(tp.typ, typedesc.FunctionType):
+        args = [generic_decl(arg) for arg in tp.typ.iterArgTypes()]
+        return generic_decl(tp.typ.returns) + '(*%s)' + '(%s)' % ", ".join(args)
+    else:
+        return '%s *'
 
 def struct_decl(tp):
     return "struct %s" % tp.name
 
-def struct_def(tp):
+def struct_def(tp, indent=None):
     output = ['struct %s:' % tp.name]
     for f in tp.members:
         if isinstance(f, typedesc.Field):
@@ -53,7 +64,11 @@ def struct_def(tp):
             output.append("    %s" % generic_decl(f))
     if not tp.members:
         output.append("    pass")
-    return "\n".join(output)
+
+    if indent:
+        return "\n".join([indent + i for i in output])
+    else:
+        return "\n".join(output)
 
 def generic_decl(tp):
     if isinstance(tp, typedesc.Typedef):
@@ -131,6 +146,8 @@ def codegen(decls):
             output.append(indent + d.signature())
         elif isinstance(d, typedesc.Typedef):
             output.append(indent + typedef_decl(d))
+        elif isinstance(d, typedesc.Structure):
+            output.append(struct_def(d, indent))
         else:
             print "Not handled: %s" % d
 
@@ -138,3 +155,4 @@ def codegen(decls):
 
 codegen(funcs)
 codegen(tpdefs)
+codegen(structs)
