@@ -1,3 +1,5 @@
+import os
+
 from ctypeslib.codegen.gccxmlparser import parse
 from ctypeslib.codegen import typedesc
 from codegenlib import Func, parse_type
@@ -7,7 +9,10 @@ from codegenlib import Func, parse_type
 
 header_name = 'foo.h'
 xml_name = 'foo.xml'
-so_name = 'foo'
+if os.name[:7] == 'darwin':
+    so_name = 'foo'
+else:
+    so_name = 'libfoo.so'
 
 #header_name = 'sndfile.h'
 #xml_name = 'sndfile.xml'
