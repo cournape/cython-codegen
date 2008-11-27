@@ -1,12 +1,17 @@
 from ctypeslib.codegen.gccxmlparser import parse
 from ctypeslib.codegen import typedesc
+from codegenlib import Func, parse_type
 
-header_name = 'alsa/asoundlib.h'
-xml_name = 'asoundlib.xml'
+#header_name = 'alsa/asoundlib.h'
+#xml_name = 'asoundlib.xml'
 
 header_name = 'foo.h'
 xml_name = 'foo.xml'
-so_name = 'libfoo.so'
+so_name = 'foo'
+
+#header_name = 'sndfile.h'
+#xml_name = 'sndfile.xml'
+#so_name = 'libsndfile.dylib'
 
 class LibrarySymbols:
     def __init__(self, soname):
@@ -30,60 +35,69 @@ class LibrarySymbols:
 items = parse(xml_name)
 syms = LibrarySymbols(so_name)
 #symbols = ['foo', 'foof', 'fool']
-#keep = [it for it in items if (isinstance(it, typedesc.Function) and it.name.startswith('snd_card'))]
+#keep = [it for it in items if (isinstance(it, typedesc.Function) and it.name.startswith('sf_'))]
+keep = [it for it in items if (it.name and not it.name.startswith('__'))]
 #keep = [it for it in items if isinstance(it, typedesc.Function)]
-keep = items
+#keep = items
 
-class Func:
-    def __init__(self, ret, name, args):
-        self.name = name
-        self.returns = ret
-        self.args = args
+def parse_enum(tp):
+    return tp.name, tp.value
 
-    def signature(self):
-        return "%s %s(%s)" % (self.returns, self.name, ",".join(self.args))
+funcs = {}
+tpdefs = {}
+enumvals = {}
+enums = []
+structs = {}
+for k in keep:
+    if isinstance(k, typedesc.Function):
+        if syms.has(k.name) :#and k.name.startswith("sf_"):
+            funcs[k.name] = Func(k)
+    #funcs.append(Func(k.returns.name, k.name, args_type))
+    elif isinstance(k, typedesc.EnumValue):
+        name, value = parse_enum(k)
+        enumvals[name] = value
+    elif isinstance(k, typedesc.Enumeration):
+        enums.append(k)
+    elif isinstance(k, typedesc.Typedef):
+        tpdefs[k.name] = parse_type(k.typ)
+        #print '%s %s %s' % ('typedef', k.name, parse_type(k.typ))
+    elif isinstance(k, typedesc.Structure):
+        #print 'struct: %s' % k.name
+        #for f in k.members:
+        #    print '\t' + f.name + ': ' + parse_type(f.typ)
+        structs[k.name] = k.members
+    elif isinstance(k, typedesc.Variable):
+        #print 'struct: %s' % k.name
+        #for f in k.members:
+        #    print '\t' + f.name + ': ' + parse_type(f.typ)
+        print k.name
+    else:
+        print "Do not know how to handle", str(k)
 
-def parse_type(tp):
+def parse_type_definition(tp):
     if isinstance(tp, typedesc.FundamentalType):
         return tp.name
     elif isinstance(tp, typedesc.PointerType):
         return parse_type(tp.typ) + '*'
     elif isinstance(tp, typedesc.CvQualifiedType):
         return 'const ' + parse_type(tp.typ)
-    elif isinstance(tp, typedesc.Typedef):
-        return '%s %s %s' % ('typedef', tp.name, parse_type(tp.typ))
+    elif isinstance(tp, typedesc.Structure):
+        return tp.name
+    elif isinstance(tp, typedesc.FunctionType):
+        return ""
     else:
         raise ValueError("yoyo", type(tp))
 
-def parse_enum(tp):
-    return tp.name + ' ' + tp.value
+#Def generate_typedef_declaration(tp):
+#    return "typedef %s %s" % (tp.name, tp.typ)
 
-funcs = []
-for k in keep:
-    if isinstance(k, typedesc.Function):
-        if syms.has(k.name):
-            print k.name
-            for arg in k.iterArgTypes():
-                print '\t',  parse_type(arg)
-    #funcs.append(Func(k.returns.name, k.name, args_type))
-    elif isinstance(k, typedesc.EnumValue):
-        print parse_enum(k)
-    elif isinstance(k, typedesc.Typedef):
-        print '%s %s %s' % ('typedef', k.name, parse_type(k.typ))
-    elif isinstance(k, typedesc.Structure):
-        print 'struct: %s' % k.name
-        for f in k.members:
-            print '\t' + f.name + ': ' + parse_type(f.typ)
-    else:
-        print "Do not know how to handle", str(k)
+def codegen(decls):
+    output = []
+    output.append('cdef extern from "%s":' % header_name)
+    indent = '    '
+    for d in decls.values():
+        output.append(indent + d.signature())
 
-#def codegen(syms):
-#    output = []
-#    output.append('cdef extern from "%s":' % header_name)
-#    indent = '    '
-#    for s in syms:
-#        output.append(indent + s.signature())
-#
-#    print '\n'.join(output)
-#
-#codegen(funcs)
+    print '\n'.join(output)
+
+codegen(funcs)
