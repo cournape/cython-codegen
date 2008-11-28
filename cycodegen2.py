@@ -106,3 +106,16 @@ for name, f in funcs.items():
             arguments[t] = None
 
 print "Need to pull out arguments", arguments.keys()
+
+from cytypes import generic_decl, generic_def
+
+print "========== declarations ============="
+for a in arguments.keys():
+    print generic_decl(handled[a])
+
+print "========== definitions ============="
+for a in arguments.keys():
+    print generic_def(handled[a])
+
+print "============================="
+print structs
