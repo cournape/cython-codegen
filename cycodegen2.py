@@ -1,7 +1,8 @@
 import sys
 import re
 
-from ctypeslib.codegen.gccxmlparser import parse
+#from ctypeslib.codegen.gccxmlparser import parse
+from gccxmlparser import parse
 from ctypeslib.codegen import typedesc
 from codegenlib import Func, parse_type
 
