@@ -51,8 +51,8 @@ arguments = {}
 handled = {}
 
 for k in keep:
-    # Location computation only works when all definitions/declarations are
-    # pulled from one header.
+    # XXX: Location computation only works when all definitions/declarations
+    # are pulled from one header.
     if hasattr(k, 'name'):
         handled[k.name] = k
         if hasattr(k, 'location'):
