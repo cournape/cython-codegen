@@ -47,11 +47,16 @@ locations = {}
 # List of items used as function argument
 arguments = {}
 
+# List of items we may use and can handle
+handled = {}
+
 for k in keep:
     # Location computation only works when all definitions/declarations are
     # pulled from one header.
-    if hasattr(k, 'name') and hasattr(k, 'location'):
-        locations[k.name] = int(k.location[1])
+    if hasattr(k, 'name'):
+        handled[k.name] = k
+        if hasattr(k, 'location'):
+            locations[k.name] = int(k.location[1])
     if isinstance(k, typedesc.Function):
         funcs[k.name] = k
     elif isinstance(k, typedesc.EnumValue):
