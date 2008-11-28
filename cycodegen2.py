@@ -13,7 +13,8 @@ else:
     so_name = 'lib%s.so' % root
 
 items = parse(xml_name)
-keep = [it for it in items if (hasattr(it, 'name') and it.name and not it.name.startswith('__'))]
+#keep = [it for it in items if (hasattr(it, 'name') and it.name and not it.name.startswith('__'))]
+keep = items
 
 # Dictionaries name -> typedesc instances
 funcs = {}
@@ -25,6 +26,9 @@ vars = {}
 
 # Dictionary name -> location (as integer)
 locations = {}
+
+# List of items used as function argument
+arguments = {}
 
 for k in keep:
     # Location computation only works when all definitions/declarations are
@@ -48,7 +52,23 @@ for k in keep:
 
 from funcs import generic_as_arg
 
+def find_named_type(tp):
+    if hasattr(tp, 'name'):
+        return tp.name
+    elif isinstance(tp, typedesc.CvQualifiedType) or \
+         isinstance(tp, typedesc.PointerType):
+        return find_named_type(tp.typ)
+    elif isinstance(tp, typedesc.FunctionType):
+        return None
+    else:
+        raise ValueError("Unhandled type %s" % str(tp))
+
 for name, f in funcs.items():
     #print "Generating decl for func %s" % name
     args = [generic_as_arg(a) for a in f.iterArgTypes()]
+    for a in f.iterArgTypes():
+        namedtype = find_named_type(a)
+        if namedtype:
+            arguments[namedtype] = None
+
     print "%s %s(%s)" % (generic_as_arg(f.returns), name, ", ".join(args))
