@@ -1,4 +1,5 @@
 import sys
+import re
 
 from ctypeslib.codegen.gccxmlparser import parse
 from ctypeslib.codegen import typedesc
@@ -6,6 +7,7 @@ from codegenlib import Func, parse_type
 
 root = 'foo'
 header_name = '%s.h' % root
+header_matcher = re.compile(header_name)
 xml_name = '%s.xml' % root
 if sys.platform[:7] == 'darwin':
     so_name = root
@@ -20,8 +22,14 @@ for it in items:
     # Avoid pulling all the builtins
     if hasattr(it, 'name'):
         if it.name and not it.name.startswith('__builtin'):
-            keep.append(it)
-            named_items[it.name] = it
+            if hasattr(it, 'location'):
+                if header_matcher.search(it.location[0]):
+                    #print "%s matched location" % it.name
+                    keep.append(it)
+                    named_items[it.name] = it
+            else:
+                keep.append(it)
+                named_items[it.name] = it
     else:
         keep.append(it)
 
