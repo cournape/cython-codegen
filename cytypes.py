@@ -26,6 +26,8 @@ def struct_def(tp, indent=None):
             output.append("    %s %s" % (generic_decl(f.typ), f.name))
         elif isinstance(f, typedesc.Structure):
             output.append("    %s" % generic_decl(f))
+        else:
+            print "Struct member not handled:", f
     if not tp.members:
         output.append("    pass")
 
