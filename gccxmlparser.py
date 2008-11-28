@@ -92,8 +92,6 @@ class GCCXML_Parser(base):
                 # EnumValue, for example, has no "_id" attribute.
                 # Invent our own...
                 self.all[id(result)] = result
-        else:
-            print mth
         # if this element has children, push onto the context
         if name in self.has_values:
             self.context.append(result)
@@ -311,9 +309,13 @@ class GCCXML_Parser(base):
         return typedesc.Structure(name, align, members, bases, size)
 
     def _fixup_Structure(self, s):
-        print "Getting struct:", s.name
-        print [m for m in s.members]
-        s.members = [self.all[m] for m in s.members]
+        _members = [self.all[m] for m in s.members]
+        s.members = []
+        for m in _members:
+            if not (isinstance(m, _FakeDestructor) or
+                    isinstance(m, typedesc.Constructor) or
+                    isinstance(m, _FakeOperatorMethod)):
+                s.members.append(m)
         s.bases = [self.all[b] for b in s.bases]
     _fixup_Union = _fixup_Structure
 
