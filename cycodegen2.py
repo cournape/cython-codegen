@@ -15,13 +15,22 @@ else:
 items = parse(xml_name)
 keep = [it for it in items if (hasattr(it, 'name') and it.name and not it.name.startswith('__'))]
 
+# Dictionaries name -> typedesc instances
 funcs = {}
 tpdefs = {}
 enumvals = {}
 enums = {}
 structs = {}
 vars = {}
+
+# Dictionary name -> location (as integer)
+locations = {}
+
 for k in keep:
+    # Location computation only works when all definitions/declarations are
+    # pulled from one header.
+    if hasattr(k, 'name') and hasattr(k, 'location'):
+        locations[k.name] = int(k.location[1])
     if isinstance(k, typedesc.Function):
         funcs[k.name] = k
     elif isinstance(k, typedesc.EnumValue):
