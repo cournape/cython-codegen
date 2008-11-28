@@ -128,8 +128,8 @@ from cytypes import generic_decl, generic_def
 print "========== declarations ============="
 for a in arguments.keys():
     print generic_decl(a)
-    if isinstance(a, typedesc.Typedef):
-        print generic_decl(a.typ)
+    #if isinstance(a, typedesc.Typedef):
+    #    print generic_decl(a.typ)
 
 print "========== definitions ============="
 for a in arguments.keys():
