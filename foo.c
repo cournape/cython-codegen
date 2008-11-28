@@ -34,3 +34,11 @@ void mega_struct_foo(struct yoyo* a)
 {
         (void)a;
 }
+
+void mega_foo4(foo_func2_t a)
+{
+}
+
+void mega_foo5(void (*a)())
+{
+}

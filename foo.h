@@ -45,6 +45,9 @@ void (*foo_fptr2)(int, int);
 
 typedef void(*foo_func2_t)();
 
+void mega_foo4(foo_func2_t a);
+void mega_foo5(void (*a)());
+
 /*
  * Enum definitions
  */
@@ -57,6 +60,10 @@ enum FOO2 {
         FOO2_ENUM1 = 2,
         FOO2_ENUM2
 } foo2;
+
+enum {
+	FOO_ENUM
+};
 
 void mega_struct_foo(struct yoyo*);
 void mega_struct_foo2(struct yoyo2*);
