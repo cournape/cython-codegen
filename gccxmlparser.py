@@ -1,3 +1,6 @@
+# This code is originally from ctypeslib, by Thomas Heller, under the MIT
+# license
+
 """gccxmlparser - parse a gccxml created XML file into sequence type descriptions"""
 try:
     from xml.etree import cElementTree
