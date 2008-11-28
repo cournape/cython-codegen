@@ -40,6 +40,6 @@ for k in keep:
 from funcs import generic_as_arg
 
 for name, f in funcs.items():
-    print "Generating decl for func %s" % name
+    #print "Generating decl for func %s" % name
     args = [generic_as_arg(a) for a in f.iterArgTypes()]
-    print args
+    print "%s %s(%s)" % (generic_as_arg(f.returns), name, ", ".join(args))
