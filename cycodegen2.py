@@ -85,6 +85,19 @@ def find_named_type(tp):
     else:
         raise ValueError("Unhandled type %s" % str(tp))
 
+def find_unqualified_type(tp):
+    if isinstance(tp, typedesc.FundamentalType) or \
+            isinstance(tp, typedesc.Structure) or \
+            isinstance(tp, typedesc.Typedef):
+        return tp
+    elif isinstance(tp, typedesc.CvQualifiedType) or \
+         isinstance(tp, typedesc.PointerType):
+        return find_unqualified_type(tp.typ)
+    elif isinstance(tp, typedesc.FunctionType):
+        return None
+    else:
+        raise ValueError("Unhandled type %s" % str(tp))
+
 def generate_func_signature(func):
     args = [generic_as_arg(a) for a in func.iterArgTypes()]
     return "%s %s(%s)" % (generic_as_arg(func.returns), func.name, ", ".join(args))
@@ -92,9 +105,10 @@ def generate_func_signature(func):
 def signature_types(func):
     types = []
     for a in func.iterArgTypes():
-        namedtype = find_named_type(a)
-        if namedtype:
-            types.append(namedtype)
+        #namedtype = find_named_type(a)
+        #if namedtype:
+        #    types.append(namedtype)
+        types.append(a)
 
     return types
 
@@ -102,8 +116,9 @@ for name, f in funcs.items():
     print generate_func_signature(f)
     types = signature_types(f)
     for t in types:
-        if named_items.has_key(t):
-            arguments[t] = None
+        ut = find_unqualified_type(t)
+        if ut in keep:
+            arguments[ut] = None
 
 print "Need to pull out arguments", arguments.keys()
 
@@ -111,11 +126,15 @@ from cytypes import generic_decl, generic_def
 
 print "========== declarations ============="
 for a in arguments.keys():
-    print generic_decl(handled[a])
+    print generic_decl(a)
+    if isinstance(a, typedesc.Typedef):
+        print generic_decl(a.typ)
 
 print "========== definitions ============="
 for a in arguments.keys():
-    print generic_def(handled[a])
+    print generic_def(a)
+    if isinstance(a, typedesc.Typedef):
+        print generic_def(a.typ)
 
 print "============================="
 print structs
