@@ -4,12 +4,13 @@ from ctypeslib.codegen.gccxmlparser import parse
 from ctypeslib.codegen import typedesc
 from codegenlib import Func, parse_type
 
-header_name = 'foo.h'
-xml_name = 'foo.xml'
+root = 'foo'
+header_name = '%s.h' % root
+xml_name = '%s.xml' % root
 if sys.platform[:7] == 'darwin':
-    so_name = 'foo'
+    so_name = root
 else:
-    so_name = 'libfoo.so'
+    so_name = 'lib%s.so' % root
 
 items = parse(xml_name)
 keep = [it for it in items if (hasattr(it, 'name') and it.name and not it.name.startswith('__'))]
