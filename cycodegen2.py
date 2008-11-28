@@ -15,11 +15,13 @@ else:
 items = parse(xml_name)
 #keep = [it for it in items if (hasattr(it, 'name') and it.name and not it.name.startswith('__'))]
 keep = []
+named_items = {}
 for it in items:
     # Avoid pulling all the builtins
     if hasattr(it, 'name'):
         if it.name and not it.name.startswith('__builtin'):
             keep.append(it)
+            named_items[it.name] = it
     else:
         keep.append(it)
 
@@ -86,4 +88,8 @@ def signature_types(func):
 for name, f in funcs.items():
     print generate_func_signature(f)
     types = signature_types(f)
-    print "Need to pull types %s for func %s" % (types, name)
+    for t in types:
+        if named_items.has_key(t):
+            arguments[t] = None
+
+print "Need to pull out arguments", arguments.keys()
