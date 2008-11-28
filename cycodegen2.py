@@ -14,7 +14,14 @@ else:
 
 items = parse(xml_name)
 #keep = [it for it in items if (hasattr(it, 'name') and it.name and not it.name.startswith('__'))]
-keep = items
+keep = []
+for it in items:
+    # Avoid pulling all the builtins
+    if hasattr(it, 'name'):
+        if it.name and not it.name.startswith('__builtin'):
+            keep.append(it)
+    else:
+        keep.append(it)
 
 # Dictionaries name -> typedesc instances
 funcs = {}
@@ -63,12 +70,20 @@ def find_named_type(tp):
     else:
         raise ValueError("Unhandled type %s" % str(tp))
 
-for name, f in funcs.items():
-    #print "Generating decl for func %s" % name
-    args = [generic_as_arg(a) for a in f.iterArgTypes()]
-    for a in f.iterArgTypes():
+def generate_func_signature(func):
+    args = [generic_as_arg(a) for a in func.iterArgTypes()]
+    return "%s %s(%s)" % (generic_as_arg(func.returns), func.name, ", ".join(args))
+
+def signature_types(func):
+    types = []
+    for a in func.iterArgTypes():
         namedtype = find_named_type(a)
         if namedtype:
-            arguments[namedtype] = None
+            types.append(namedtype)
 
-    print "%s %s(%s)" % (generic_as_arg(f.returns), name, ", ".join(args))
+    return types
+
+for name, f in funcs.items():
+    print generate_func_signature(f)
+    types = signature_types(f)
+    print "Need to pull types %s for func %s" % (types, name)
