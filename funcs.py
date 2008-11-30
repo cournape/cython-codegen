@@ -13,8 +13,8 @@ def pointer_as_arg(tp):
     if isinstance(tp.typ, typedesc.FunctionType):
         args = [generic_as_arg(arg) for arg in tp.typ.iterArgTypes()]
         if len(args) > 0:
-            return (generic_as_arg(tp.typ.returns) % '' ) + \
-                   '(*)' + '(%s)' % ", ".join(args)
+            return generic_as_arg(tp.typ.returns) + \
+                   ' (*)(%s)' % ", ".join(args)
         else:
             return generic_as_arg(tp.typ.returns) + ' (*)()'
     else:
