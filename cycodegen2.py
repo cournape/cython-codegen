@@ -53,7 +53,7 @@ def classify(items, locations):
                 elif isinstance(it, typedesc.Variable):
                     vars[it.name] = it
                 else:
-                    print "Do not itnow how to handle", str(it)
+                    print "Do not know how to handle", str(it)
         except KeyError:
             pass
             #print "No location for item %s, ignoring" % str(it)
