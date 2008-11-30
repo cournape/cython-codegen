@@ -100,6 +100,9 @@ def signatures_types(funcs):
             ut = find_unqualified_type(t)
             if ut in items:
                 arguments.add(ut)
+        ut = find_unqualified_type(f.returns)
+        if ut in items:
+            arguments.add(ut)
 
     return arguments
 
