@@ -4,16 +4,7 @@ import re
 #from ctypeslib.codegen.gccxmlparser import parse
 from gccxmlparser import parse
 from ctypeslib.codegen import typedesc
-from codegenlib import Func, parse_type
-
-root = 'foo'
-header_name = '%s.h' % root
-header_matcher = re.compile(header_name)
-xml_name = '%s.xml' % root
-if sys.platform[:7] == 'darwin':
-    so_name = root
-else:
-    so_name = 'lib%s.so' % root
+from codegenlib import Func, parse_type, classify
 
 def query_items(xml, filter=None):
     # XXX: support filter
@@ -27,48 +18,56 @@ def query_items(xml, filter=None):
         keep.add(it)
 
         if hasattr(it, 'name'):
-            named[it.name] = it
+            named[it] = it.name
 
         if hasattr(it, 'location'):
             locations[it] = it.location
 
     return keep, named, locations
 
+def classify(items, locations):
+    # Dictionaries name -> typedesc instances
+    funcs = {}
+    tpdefs = {}
+    enumvals = {}
+    enums = {}
+    structs = {}
+    vars = {}
+
+    for it in items:
+        try:
+            origin = locations[it][0]
+            if header_matcher.search(origin):
+                if isinstance(it, typedesc.Function):
+                    funcs[it.name] = it
+                elif isinstance(it, typedesc.EnumValue):
+                    enumvals[it.name] = it
+                elif isinstance(it, typedesc.Enumeration):
+                    enums[it.name] = it
+                elif isinstance(it, typedesc.Typedef):
+                    tpdefs[it.name] = it
+                elif isinstance(it, typedesc.Structure):
+                    structs[it.name] = it
+                elif isinstance(it, typedesc.Variable):
+                    vars[it.name] = it
+                else:
+                    print "Do not itnow how to handle", str(it)
+        except KeyError:
+            print "No location for item %s, ignoring" % str(it)
+
+    return funcs, tpdefs, enumvals, enums, structs, vars
+
+root = 'foo'
+header_name = '%s.h' % root
+header_matcher = re.compile(header_name)
+xml_name = '%s.xml' % root
+if sys.platform[:7] == 'darwin':
+    so_name = root
+else:
+    so_name = 'lib%s.so' % root
+
 items, named, locations = query_items(xml_name)
-
-# Dictionaries name -> typedesc instances
-funcs = {}
-tpdefs = {}
-enumvals = {}
-enums = {}
-structs = {}
-vars = {}
-
-# List of items we may use and can handle
-handled = {}
-
-for it in items:
-    try:
-        origin = locations[it][0]
-        if header_matcher.search(origin):
-            if hasattr(it, 'name'):
-                handled[it.name] = it
-            if isinstance(it, typedesc.Function):
-                funcs[it.name] = it
-            elif isinstance(it, typedesc.EnumValue):
-                enumvals[it.name] = it
-            elif isinstance(it, typedesc.Enumeration):
-                enums[it.name] = it
-            elif isinstance(it, typedesc.Typedef):
-                tpdefs[it.name] = it
-            elif isinstance(it, typedesc.Structure):
-                structs[it.name] = it
-            elif isinstance(it, typedesc.Variable):
-                vars[it.name] = it
-            else:
-                print "Do not itnow how to handle", str(it)
-    except KeyError:
-        print "No location for item %s, ignoring" % str(it)
+funcs, tpdefs, enumvals, enums, structs, vars = classify(items, locations)
 
 from funcs import generic_as_arg
 
