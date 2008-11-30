@@ -120,9 +120,11 @@ class TypePuller:
 
     def pull_typedef(self, item):
         # XXX: Generate the typdef itself
-        self.pull(item.typ)
-        #names.add(item.name)
-        self._items.append(item)
+        if not item in self._done:
+            self._done.add(item)
+            self.pull(item.typ)
+            #names.add(item.name)
+            self._items.append(item)
 
     def pull_function(self, item):
         # XXX: fix signatures_type for single item
