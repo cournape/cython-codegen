@@ -123,7 +123,7 @@ class TypePuller:
         for t in types:
             ut = find_unqualified_type(t)
             if ut in self._all:
-                self._items.add(ut)
+                self.pull(ut)
         self._items.add(item)
 
     def pull_function_type(self, item):
@@ -133,7 +133,7 @@ class TypePuller:
         for t in types:
             ut = find_unqualified_type(t)
             if ut in self._all:
-                self._items.add(ut)
+                self.pull(ut)
 
     def pull_structure(self, item):
         #names.add(item.name)
