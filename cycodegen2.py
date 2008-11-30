@@ -58,7 +58,8 @@ def classify(items, locations, ifilter=None):
                 else:
                     print "Do not know how to handle", str(it)
         except KeyError:
-            pass
+            if isinstance(it, typedesc.EnumValue):
+                enumvals[it.name] = it
             #print "No location for item %s, ignoring" % str(it)
 
     return funcs, tpdefs, enumvals, enums, structs, vars
