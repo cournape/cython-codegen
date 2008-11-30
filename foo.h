@@ -36,6 +36,7 @@ float foof(float a);
 long double fool(long double a);
 
 void mega_foo1(foo_int32_t a);
+void mega_foo1_1(foo3_int32_t a);
 void mega_foo2(const int a);
 void mega_foo3(const int *a);
 
