@@ -290,7 +290,7 @@ else:
 
 items, named, locations = query_items(xml_name)
 funcs, tpdefs, enumvals, enums, structs, vars = \
-        classify(items, locations, ifilter=header_matcher.search)
+        classify(items, locations, ifilter=None)#header_matcher.search)
 
 arguments = signatures_types(funcs.values())
 print "Need to pull out arguments", [named[i] for i in arguments]
