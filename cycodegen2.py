@@ -60,7 +60,8 @@ def classify(items, locations, ifilter=None):
         except KeyError:
             if isinstance(it, typedesc.EnumValue):
                 enumvals[it.name] = it
-            #print "No location for item %s, ignoring" % str(it)
+            else:
+                print "No location for item %s, ignoring" % str(it)
 
     return funcs, tpdefs, enumvals, enums, structs, vars
 
@@ -269,7 +270,7 @@ def named_pointer_decl(tp):
         args = [generic_decl(arg) for arg in tp.typ.iterArgTypes()]
         return generic_decl(tp.typ.returns) + '(*%s)' + '(%s)' % ", ".join(args)
     else:
-        return '%s *' % generic_decl(tp.typ)
+        return generic_decl(tp.typ) + ' * %s'
 
 def cy_generate_typedef(item):
     if not isinstance(item.typ, typedesc.PointerType):
