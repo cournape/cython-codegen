@@ -155,6 +155,11 @@ class TypePuller:
                 self._items.append(pull(m))
         self._items.append(item)
 
+    def pull_array_type(self, item):
+        #names.append(item.name)
+        self.pull(item.typ)
+        self._items.append(item)
+
     def pull(self, item):
         if isinstance(item, typedesc.FundamentalType):
             #print "Fund Pulling", item, item.name
@@ -191,6 +196,10 @@ class TypePuller:
         elif isinstance(item, typedesc.CvQualifiedType):
             #print "FunctionType Pulling", item
             self.pull_cv_qualified_type(item)
+            return
+        elif isinstance(item, typedesc.ArrayType):
+            #print "FunctionType Pulling", item
+            self.pull_array_type(item)
             return
         else:
             raise ValueError, ("item not handled:", item)
