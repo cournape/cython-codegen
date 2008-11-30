@@ -15,24 +15,28 @@ if sys.platform[:7] == 'darwin':
 else:
     so_name = 'lib%s.so' % root
 
-items = parse(xml_name)
-#keep = [it for it in items if (hasattr(it, 'name') and it.name and not it.name.startswith('__'))]
-keep = []
-named_items = {}
-for it in items:
-    # Avoid pulling all the builtins
-    if hasattr(it, 'name'):
-        if it.name and not it.name.startswith('__builtin'):
-            if hasattr(it, 'location'):
-                if header_matcher.search(it.location[0]):
-                    #print "%s matched location" % it.name
-                    keep.append(it)
-                    named_items[it.name] = it
-            else:
-                keep.append(it)
-                named_items[it.name] = it
-    else:
-        keep.append(it)
+def query_items(xml, filter=None):
+    # XXX: support filter
+    xml_items = parse(xml)
+    items = {}
+    keep = set()
+    named = {}
+    locations = {}
+    for it in xml_items:
+        items[it] = it
+        # Avoid pulling all the builtins
+        if hasattr(it, 'name'):
+            if it.name and not it.name.startswith('__builtin'):
+                keep.add(it)
+                named[it.name] = it
+        else:
+            keep.add(it)
+
+        if hasattr(it, 'location'):
+            locations[it] = it.location
+    return keep, named, locations
+
+keep, named, locations = query_items(xml_name)
 
 # Dictionaries name -> typedesc instances
 funcs = {}
