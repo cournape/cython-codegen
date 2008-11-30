@@ -43,6 +43,8 @@ def generic_decl(tp):
         return tp.name
     elif isinstance(tp, typedesc.PointerType):
         return pointer_decl(tp)
+    elif isinstance(tp, typedesc.CvQualifiedType):
+        return generic_decl(tp.typ)
     else:
         print "Not handled: ", tp
 
