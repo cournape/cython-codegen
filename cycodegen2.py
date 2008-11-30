@@ -81,24 +81,13 @@ def find_unqualified_type(tp):
     else:
         raise ValueError("Unhandled type %s" % str(tp))
 
-def signature_types(func):
-    types = []
-    for a in func.iterArgTypes():
-        #namedtype = find_named_type(a)
-        #if namedtype:
-        #    types.append(namedtype)
-        types.append(a)
-
-    return types
-
-def funcs_dependencies(funcs):
+def signatures_types(funcs):
     """Given a sequence of typedesc.Function instances, generate a set of all
     typedesc instances used in function declarations."""
     arguments = set()
 
     for f in funcs:
-        types = signature_types(f)
-        for t in types:
+        for t in f.iterArgTypes():
             ut = find_unqualified_type(t)
             if ut in items:
                 arguments.add(ut)
@@ -117,5 +106,5 @@ else:
 items, named, locations = query_items(xml_name)
 funcs, tpdefs, enumvals, enums, structs, vars = classify(items, locations)
 
-arguments = funcs_dependencies(funcs.values())
+arguments = signatures_types(funcs.values())
 print "Need to pull out arguments", [named[i] for i in arguments]
