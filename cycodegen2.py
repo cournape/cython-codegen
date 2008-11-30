@@ -55,7 +55,8 @@ def classify(items, locations):
                 else:
                     print "Do not itnow how to handle", str(it)
         except KeyError:
-            print "No location for item %s, ignoring" % str(it)
+            pass
+            #print "No location for item %s, ignoring" % str(it)
 
     return funcs, tpdefs, enumvals, enums, structs, vars
 
@@ -118,12 +119,12 @@ class TypePuller:
     def pull_function(self, item):
         # XXX: fix signatures_type for single item
         types = signatures_types([item])
-        self._items.add(item)
         #names.add(item.name)
         for t in types:
             ut = find_unqualified_type(t)
             if ut in self._all:
                 self._items.add(ut)
+        self._items.add(item)
 
     def pull_function_type(self, item):
         # XXX: fix signatures_type for single item
@@ -135,12 +136,12 @@ class TypePuller:
                 self._items.add(ut)
 
     def pull_structure(self, item):
-        self._items.add(item)
         #names.add(item.name)
         for m in item.members:
             g = self.pull(m)
             if g:
                 self._items.add(pull(m))
+        self._items.add(item)
 
     def pull(self, item):
         if isinstance(item, typedesc.FundamentalType):
@@ -184,9 +185,9 @@ class TypePuller:
 def cmpitems(a, b):
     aloc = getattr(a, "location", None)
     bloc = getattr(b, "location", None)
-    if aloc is None: 
+    if aloc is None:
         return -1
-    if bloc is None: 
+    if bloc is None:
         return 1
 
     st = cmp(aloc[0],bloc[0]) or cmp(int(aloc[1]),int(bloc[1]))
@@ -284,7 +285,6 @@ gen = list(needed) + funcs.values()
 gen_names = [named[i] for i in gen]
 
 gen.sort(cmpitems)
-
 cython_code = [cy_generate(i) for i in gen]
 
 output = open(pyx_name, 'w')
