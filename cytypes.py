@@ -41,7 +41,8 @@ def generic_decl(tp):
         return struct_decl(tp)
     elif isinstance(tp, typedesc.FundamentalType):
         return tp.name
-    elif isinstance(tp, typedesc.PointerType):
+    elif isinstance(tp, typedesc.PointerType) \
+        or isinstance(tp, typedesc.ArrayType):
         return pointer_decl(tp)
     elif isinstance(tp, typedesc.CvQualifiedType):
         return generic_decl(tp.typ)
