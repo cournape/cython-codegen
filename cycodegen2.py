@@ -18,22 +18,20 @@ else:
 def query_items(xml, filter=None):
     # XXX: support filter
     xml_items = parse(xml)
-    items = {}
+    #items = {}
     keep = set()
     named = {}
     locations = {}
     for it in xml_items:
-        items[it] = it
-        # Avoid pulling all the builtins
+        #items[it] = it
+        keep.add(it)
+
         if hasattr(it, 'name'):
-            if it.name and not it.name.startswith('__builtin'):
-                keep.add(it)
-                named[it.name] = it
-        else:
-            keep.add(it)
+            named[it.name] = it
 
         if hasattr(it, 'location'):
             locations[it] = it.location
+
     return keep, named, locations
 
 keep, named, locations = query_items(xml_name)
@@ -46,9 +44,6 @@ enums = {}
 structs = {}
 vars = {}
 
-# Dictionary name -> location (as integer)
-locations = {}
-
 # List of items used as function argument
 arguments = {}
 
@@ -56,12 +51,8 @@ arguments = {}
 handled = {}
 
 for k in keep:
-    # XXX: Location computation only works when all definitions/declarations
-    # are pulled from one header.
     if hasattr(k, 'name'):
         handled[k.name] = k
-        if hasattr(k, 'location'):
-            locations[k.name] = int(k.location[1])
     if isinstance(k, typedesc.Function):
         funcs[k.name] = k
     elif isinstance(k, typedesc.EnumValue):
