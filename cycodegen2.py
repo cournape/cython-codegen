@@ -5,6 +5,8 @@ import re
 from gccxmlparser import parse
 from ctypeslib.codegen import typedesc
 from codegenlib import Func, parse_type
+from funcs import generic_as_arg
+from cytypes import generic_decl
 
 def query_items(xml, filter=None):
     # XXX: support filter
@@ -208,10 +210,57 @@ def cmpitems(a, b):
     else:
         return st
 
-root = 'sndfile'
+def named_pointer_decl(tp):
+    if isinstance(tp.typ, typedesc.FunctionType):
+        args = [generic_decl(arg) for arg in tp.typ.iterArgTypes()]
+        return generic_decl(tp.typ.returns) + '(*%s)' + '(%s)' % ", ".join(args)
+    else:
+        return '%s *' % generic_decl(tp.typ)
+
+def cy_generate_typedef(item):
+    if not isinstance(item.typ, typedesc.PointerType):
+        return ["ctypedef %s %s" % (item.typ.name, item.name)]
+    else:
+        return ["ctypedef %s" % (named_pointer_decl(item.typ) % item.name)]
+
+def cy_generate_structure(tp):
+    output = ['cdef struct %s:' % tp.name]
+    for f in tp.members:
+        if isinstance(f, typedesc.Field):
+            output.append("\t%s %s" % (generic_decl(f.typ), f.name))
+        elif isinstance(f, typedesc.Structure):
+            output.append("\t%s" % generic_decl(f))
+        else:
+            print "Struct member not handled:", f
+    if not tp.members:
+        output.append("\tpass")
+
+    return output
+
+def cy_generate_function(func):
+    args = [generic_as_arg(a) for a in func.iterArgTypes()]
+    return ["%s %s(%s)" % (generic_as_arg(func.returns), 
+            func.name, ", ".join(args))]
+
+def cy_generate(item):
+    if isinstance(item, typedesc.Typedef):
+        #print "Typedef Generating", item
+        return cy_generate_typedef(item)
+    elif isinstance(item, typedesc.Structure):
+        #print "Struct Generating", item
+        return cy_generate_structure(item)
+    elif isinstance(item, typedesc.Function):
+        #print "FunctionType Generating", item
+        return cy_generate_function(item)
+    else:
+        print "Item not handled", item
+    #    raise ValueError, ("item not handled:", item)
+
+root = 'foo'
 header_name = '%s.h' % root
 header_matcher = re.compile(header_name)
 xml_name = '%s.xml' % root
+pyx_name = '%s.pyx' % root
 if sys.platform[:7] == 'darwin':
     so_name = root
 else:
@@ -236,5 +285,15 @@ gen_names = [named[i] for i in gen]
 
 gen.sort(cmpitems)
 
-for i in gen:
-    print "generate cython code for", named[i]
+cython_code = [cy_generate(i) for i in gen]
+
+output = open(pyx_name, 'w')
+output.write("cdef extern from '%s':\n" % header_name)
+for i in cython_code:
+    if len(i) > 1:
+        output.write("\t%s\n" % i[0])
+        for j in i[1:]:
+            output.write("\t\t%s\n" % j)
+    else:
+        output.write("\t%s\n" % i[0])
+output.close()
