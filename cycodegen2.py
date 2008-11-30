@@ -4,7 +4,7 @@ import re
 #from ctypeslib.codegen.gccxmlparser import parse
 from gccxmlparser import parse
 from ctypeslib.codegen import typedesc
-from codegenlib import Func, parse_type, classify
+from codegenlib import Func, parse_type
 
 def query_items(xml, filter=None):
     # XXX: support filter
@@ -57,20 +57,6 @@ def classify(items, locations):
 
     return funcs, tpdefs, enumvals, enums, structs, vars
 
-root = 'foo'
-header_name = '%s.h' % root
-header_matcher = re.compile(header_name)
-xml_name = '%s.xml' % root
-if sys.platform[:7] == 'darwin':
-    so_name = root
-else:
-    so_name = 'lib%s.so' % root
-
-items, named, locations = query_items(xml_name)
-funcs, tpdefs, enumvals, enums, structs, vars = classify(items, locations)
-
-from funcs import generic_as_arg
-
 def find_named_type(tp):
     if hasattr(tp, 'name'):
         return tp.name
@@ -105,31 +91,31 @@ def signature_types(func):
 
     return types
 
-# Set of items used as function argument
-arguments = set()
+def funcs_dependencies(funcs):
+    """Given a sequence of typedesc.Function instances, generate a set of all
+    typedesc instances used in function declarations."""
+    arguments = set()
 
-for name, f in funcs.items():
-    types = signature_types(f)
-    for t in types:
-        ut = find_unqualified_type(t)
-        if ut in items:
-            arguments.add(ut)
+    for f in funcs:
+        types = signature_types(f)
+        for t in types:
+            ut = find_unqualified_type(t)
+            if ut in items:
+                arguments.add(ut)
 
-print "Need to pull out arguments", arguments
+    return arguments
 
-from cytypes import generic_decl, generic_def
+root = 'foo'
+header_name = '%s.h' % root
+header_matcher = re.compile(header_name)
+xml_name = '%s.xml' % root
+if sys.platform[:7] == 'darwin':
+    so_name = root
+else:
+    so_name = 'lib%s.so' % root
 
-print "========== declarations ============="
-for a in arguments:
-    print generic_decl(a)
-    #if isinstance(a, typedesc.Typedef):
-    #    print generic_decl(a.typ)
+items, named, locations = query_items(xml_name)
+funcs, tpdefs, enumvals, enums, structs, vars = classify(items, locations)
 
-print "========== definitions ============="
-for a in arguments:
-    print generic_def(a)
-    if isinstance(a, typedesc.Typedef):
-        print generic_def(a.typ)
-
-print "============================="
-print structs
+arguments = funcs_dependencies(funcs.values())
+print "Need to pull out arguments", [named[i] for i in arguments]
