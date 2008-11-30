@@ -99,7 +99,8 @@ def signatures_types(funcs):
 
 class TypePuller:
     def __init__(self, all):
-        self._items = set()
+        self._items = []
+        #self._all = sorted(all, cmpitems)
         self._all = all
 
     def pull_fundamental(self, item):
@@ -108,48 +109,48 @@ class TypePuller:
     def pull_cv_qualified_type(self, item):
         self.pull(item.typ)
         #names.add(item.name)
-        self._items.add(item)
+        self._items.append(item)
 
     def pull_typedef(self, item):
         # XXX: Generate the typdef itself
         self.pull(item.typ)
         #names.add(item.name)
-        self._items.add(item)
+        self._items.append(item)
 
     def pull_function(self, item):
         # XXX: fix signatures_type for single item
         types = signatures_types([item])
-        #names.add(item.name)
+        #names.append(item.name)
         for t in types:
             ut = find_unqualified_type(t)
             if ut in self._all:
                 self.pull(ut)
-        self._items.add(item)
+        self._items.append(item)
 
     def pull_function_type(self, item):
         # XXX: fix signatures_type for single item
         types = signatures_types([item])
-        #self._items.add(item)
+        #self._items.append(item)
         for t in types:
             ut = find_unqualified_type(t)
             if ut in self._all:
                 self.pull(ut)
 
     def pull_structure(self, item):
-        #names.add(item.name)
+        #names.append(item.name)
         for m in item.members:
             g = self.pull(m)
             if g:
-                self._items.add(pull(m))
-        self._items.add(item)
+                self._items.append(pull(m))
+        self._items.append(item)
 
     def pull(self, item):
         if isinstance(item, typedesc.FundamentalType):
-            #print "Fund Pulling", item
+            #print "Fund Pulling", item, item.name
             self.pull_fundamental(item)
             return
         elif isinstance(item, typedesc.Typedef):
-            #print "Typedef Pulling", item
+            #print "Typedef Pulling", item, item.name
             self.pull_typedef(item)
             return
         elif isinstance(item, typedesc.Structure):
@@ -181,6 +182,11 @@ class TypePuller:
 
     def values(self):
         return self._items
+
+def instance_puller(tp, all):
+    p = TypePuller(all)
+    p.pull(tp)
+    return p.values()
 
 def cmpitems(a, b):
     aloc = getattr(a, "location", None)
@@ -284,7 +290,6 @@ print "Pulled out items:", [named[i] for i in needed]
 gen = list(needed) + funcs.values()
 gen_names = [named[i] for i in gen]
 
-gen.sort(cmpitems)
 cython_code = [cy_generate(i) for i in gen]
 
 output = open(pyx_name, 'w')
