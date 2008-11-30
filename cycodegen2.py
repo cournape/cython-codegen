@@ -77,6 +77,7 @@ def find_named_type(tp):
 def find_unqualified_type(tp):
     if isinstance(tp, typedesc.FundamentalType) or \
             isinstance(tp, typedesc.Structure) or \
+            isinstance(tp, typedesc.Enumeration) or \
             isinstance(tp, typedesc.Typedef):
         return tp
     elif isinstance(tp, typedesc.CvQualifiedType) or \
