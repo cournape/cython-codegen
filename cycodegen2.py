@@ -34,7 +34,7 @@ def query_items(xml, filter=None):
 
     return keep, named, locations
 
-keep, named, locations = query_items(xml_name)
+items, named, locations = query_items(xml_name)
 
 # Dictionaries name -> typedesc instances
 funcs = {}
@@ -50,23 +50,28 @@ arguments = {}
 # List of items we may use and can handle
 handled = {}
 
-for k in keep:
-    if hasattr(k, 'name'):
-        handled[k.name] = k
-    if isinstance(k, typedesc.Function):
-        funcs[k.name] = k
-    elif isinstance(k, typedesc.EnumValue):
-        enumvals[k.name] = k
-    elif isinstance(k, typedesc.Enumeration):
-        enums[k.name] = k
-    elif isinstance(k, typedesc.Typedef):
-        tpdefs[k.name] = k
-    elif isinstance(k, typedesc.Structure):
-        structs[k.name] = k
-    elif isinstance(k, typedesc.Variable):
-        vars[k.name] = k
-    else:
-        print "Do not know how to handle", str(k)
+for it in items:
+    try:
+        origin = locations[it][0]
+        if header_matcher.search(origin):
+            if hasattr(it, 'name'):
+                handled[it.name] = it
+            if isinstance(it, typedesc.Function):
+                funcs[it.name] = it
+            elif isinstance(it, typedesc.EnumValue):
+                enumvals[it.name] = it
+            elif isinstance(it, typedesc.Enumeration):
+                enums[it.name] = it
+            elif isinstance(it, typedesc.Typedef):
+                tpdefs[it.name] = it
+            elif isinstance(it, typedesc.Structure):
+                structs[it.name] = it
+            elif isinstance(it, typedesc.Variable):
+                vars[it.name] = it
+            else:
+                print "Do not itnow how to handle", str(it)
+    except KeyError:
+        print "No location for item %s, ignoring" % str(it)
 
 from funcs import generic_as_arg
 
@@ -113,7 +118,7 @@ for name, f in funcs.items():
     types = signature_types(f)
     for t in types:
         ut = find_unqualified_type(t)
-        if ut in keep:
+        if ut in items:
             arguments[ut] = None
 
 print "Need to pull out arguments", arguments.keys()
