@@ -260,7 +260,7 @@ root = 'foo'
 header_name = '%s.h' % root
 header_matcher = re.compile(header_name)
 xml_name = '%s.xml' % root
-pyx_name = '%s.pyx' % root
+pyx_name = '_%s.pyx' % root
 if sys.platform[:7] == 'darwin':
     so_name = root
 else:
