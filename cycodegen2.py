@@ -292,6 +292,13 @@ def cy_generate_structure(tp):
 
     return output
 
+def cy_generate_enumeration(tp):
+    output = ['cdef enum %s:' % tp.name]
+    for v in tp.values:
+        output.append("\t%s = %s" % (v.name, v.value))
+
+    return output
+
 def cy_generate_function(func):
     args = [generic_as_arg(a) for a in func.iterArgTypes()]
     return ["%s %s(%s)" % (generic_as_arg(func.returns), 
@@ -315,6 +322,9 @@ def cy_generate(item):
     elif isinstance(item, typedesc.EnumValue):
         #print "FunctionType Generating", item
         return cy_generate_enum_value(item)
+    elif isinstance(item, typedesc.Enumeration):
+        #print "FunctionType Generating", item
+        return cy_generate_enumeration(item)
     else:
         print "Item not handled for cy_generate", item
     #    raise ValueError, ("item not handled:", item)

@@ -31,6 +31,8 @@ def generic_as_arg(tp):
         return generic_as_arg(tp.typ)
     elif isinstance(tp, typedesc.Structure):
         return structure_as_arg(tp)
+    elif isinstance(tp, typedesc.Enumeration):
+        return "int"
     else:
         print "not handled", tp
         return None
