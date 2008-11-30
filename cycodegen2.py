@@ -107,6 +107,7 @@ class TypePuller:
         self._items = []
         #self._all = sorted(all, cmpitems)
         self._all = all
+        self._done = set()
 
     def pull_fundamental(self, item):
         pass
@@ -143,11 +144,13 @@ class TypePuller:
 
     def pull_structure(self, item):
         #names.append(item.name)
-        for m in item.members:
-            g = self.pull(m)
-            if g:
-                self._items.append(pull(m))
-        self._items.append(item)
+        if not item in self._done:
+            self._done.add(item)
+            for m in item.members:
+                g = self.pull(m)
+                if g:
+                    self._items.append(pull(m))
+            self._items.append(item)
 
     def pull_union(self, item):
         #names.append(item.name)
