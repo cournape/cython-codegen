@@ -147,6 +147,14 @@ class TypePuller:
                 self._items.append(pull(m))
         self._items.append(item)
 
+    def pull_union(self, item):
+        #names.append(item.name)
+        for m in item.members:
+            g = self.pull(m)
+            if g:
+                self._items.append(pull(m))
+        self._items.append(item)
+
     def pull(self, item):
         if isinstance(item, typedesc.FundamentalType):
             #print "Fund Pulling", item, item.name
@@ -159,6 +167,10 @@ class TypePuller:
         elif isinstance(item, typedesc.Structure):
             #print "Struct Pulling", item, item.name
             self.pull_structure(item)
+            return
+        elif isinstance(item, typedesc.Union):
+            #print "FunctionType Pulling", item
+            self.pull_union(item)
             return
         elif isinstance(item, typedesc.Function):
             #print "Func Pulling", item
