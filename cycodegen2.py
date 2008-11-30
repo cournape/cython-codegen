@@ -287,9 +287,9 @@ def cy_generate(item):
         print "Item not handled", item
     #    raise ValueError, ("item not handled:", item)
 
-root = 'foo'
+root = 'asoundlib'
 header_name = '%s.h' % root
-header_matcher = re.compile(header_name)
+header_matcher = re.compile('alsa')
 xml_name = '%s.xml' % root
 pyx_name = '_%s.pyx' % root
 if sys.platform[:7] == 'darwin':
