@@ -335,18 +335,18 @@ funcs, tpdefs, enumvals, enums, structs, vars = \
         classify(items, locations, ifilter=header_matcher.search)
 
 arguments = signatures_types(funcs.values())
-print "Need to pull out arguments", [named[i] for i in arguments]
+#print "Need to pull out arguments", [named[i] for i in arguments]
 
 puller = TypePuller(items)
 for a in arguments:
     puller.pull(a)
 
 needed = puller.values()
-print "Pulled out items:", [named[i] for i in needed]
+#print "Pulled out items:", [named[i] for i in needed]
 
 # List of items to generate code for
 gen = enumvals.values() + list(needed) + funcs.values()
-gen_names = [named[i] for i in gen]
+#gen_names = [named[i] for i in gen]
 
 cython_code = [cy_generate(i) for i in gen]
 
