@@ -79,6 +79,8 @@ enum {
 	FOO_ENUM
 };
 
+void mega_enum_foo(enum FOO1);
+
 void mega_struct_foo(struct yoyo*);
 void mega_struct_foo2(struct yoyo2*);
 void mega_struct_foo3(yoyo3*);
