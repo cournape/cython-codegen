@@ -21,11 +21,19 @@ struct yoyo {
 /* try opaque structure */
 struct yoyo2;
 
+/* try typedef'd opaque structure */
+typedef struct yoyo4_tag yoyo4;
+typedef struct yoyo5_tag yoyo5;
+
 /* try 'inner' structure */
 struct yoyo3 {
         struct yoyo a;
         int b;
         double c;
+};
+
+struct yoyo5_tag {
+        int a;
 };
 
 /*
@@ -68,5 +76,7 @@ enum {
 
 void mega_struct_foo(struct yoyo*);
 void mega_struct_foo2(struct yoyo2*);
+void mega_struct_foo4(yoyo4*);
+void mega_struct_foo5(yoyo5*);
 
 #endif
