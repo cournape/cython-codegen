@@ -27,7 +27,7 @@ def query_items(xml, filter=None):
 
     return keep, named, locations
 
-def classify(items, locations):
+def classify(items, locations, ifilter=None):
     # Dictionaries name -> typedesc instances
     funcs = {}
     tpdefs = {}
@@ -36,10 +36,13 @@ def classify(items, locations):
     structs = {}
     vars = {}
 
+    if ifilter is None:
+        ifilter = lambda x : True
+
     for it in items:
         try:
             origin = locations[it][0]
-            if header_matcher.search(origin):
+            if ifilter(origin):
                 if isinstance(it, typedesc.Function):
                     funcs[it.name] = it
                 elif isinstance(it, typedesc.EnumValue):
@@ -274,7 +277,8 @@ else:
     so_name = 'lib%s.so' % root
 
 items, named, locations = query_items(xml_name)
-funcs, tpdefs, enumvals, enums, structs, vars = classify(items, locations)
+funcs, tpdefs, enumvals, enums, structs, vars = \
+        classify(items, locations, ifilter=header_matcher.search)
 
 arguments = signatures_types(funcs.values())
 print "Need to pull out arguments", [named[i] for i in arguments]
