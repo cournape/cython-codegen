@@ -316,7 +316,7 @@ def cy_generate(item):
         #print "FunctionType Generating", item
         return cy_generate_enum_value(item)
     else:
-        print "Item not handled", item
+        print "Item not handled for cy_generate", item
     #    raise ValueError, ("item not handled:", item)
 
 #root = 'asoundlib'
