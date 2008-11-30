@@ -34,5 +34,5 @@ def generic_as_arg(tp):
     elif isinstance(tp, typedesc.Enumeration):
         return "int"
     else:
-        print "not handled", tp
+        print "Argument not handled in generic_as_arg", tp
         return None
