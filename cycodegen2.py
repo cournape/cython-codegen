@@ -99,10 +99,6 @@ def find_unqualified_type(tp):
     else:
         raise ValueError("Unhandled type %s" % str(tp))
 
-def generate_func_signature(func):
-    args = [generic_as_arg(a) for a in func.iterArgTypes()]
-    return "%s %s(%s)" % (generic_as_arg(func.returns), func.name, ", ".join(args))
-
 def signature_types(func):
     types = []
     for a in func.iterArgTypes():
@@ -114,7 +110,6 @@ def signature_types(func):
     return types
 
 for name, f in funcs.items():
-    print generate_func_signature(f)
     types = signature_types(f)
     for t in types:
         ut = find_unqualified_type(t)
