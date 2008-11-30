@@ -179,7 +179,36 @@ class TypePuller:
     def values(self):
         return self._items
 
-root = 'foo'
+def cmpitems(a, b):
+    aloc = getattr(a, "location", None)
+    bloc = getattr(b, "location", None)
+    if aloc is None: 
+        return -1
+    if bloc is None: 
+        return 1
+
+    st = cmp(aloc[0],bloc[0]) or cmp(int(aloc[1]),int(bloc[1]))
+    if st == 0:
+        # Two items as the same location: if it is a typedef'd structure with
+        # different name and tag, we make sure the structure is defined before
+        # the typedef. If it is a different case, just do nothing for now
+        if isinstance(a, typedesc.Structure):
+            if isinstance(b, typedesc.Typedef):
+                return -1
+            else:
+                # XXX
+                print "Hm, not sure what to do here"
+                return 0
+        if isinstance(b, typedesc.Structure):
+            if isinstance(a, typedesc.Typedef):
+                return 1
+            else:
+                print "Hm, not sure what to do here"
+                return 0
+    else:
+        return st
+
+root = 'sndfile'
 header_name = '%s.h' % root
 header_matcher = re.compile(header_name)
 xml_name = '%s.xml' % root
@@ -200,3 +229,12 @@ for a in arguments:
 
 needed = puller.values()
 print "Pulled out items:", [named[i] for i in needed]
+
+# List of items to generate code for
+gen = list(needed) + funcs.values()
+gen_names = [named[i] for i in gen]
+
+gen.sort(cmpitems)
+
+for i in gen:
+    print "generate cython code for", named[i]
