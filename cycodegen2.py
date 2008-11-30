@@ -161,10 +161,28 @@ class TypePuller:
         self.pull(item.typ)
         self._items.append(item)
 
+    def pull_enumeration(self, item):
+        #names.append(item.name)
+        for v in item.values:
+            self.pull(v)
+        self._items.append(item)
+
+    def pull_enum_value(self, item):
+        #names.append(item.name)
+        self._items.append(item)
+
     def pull(self, item):
         if isinstance(item, typedesc.FundamentalType):
             #print "Fund Pulling", item, item.name
             self.pull_fundamental(item)
+            return
+        elif isinstance(item, typedesc.Enumeration):
+            #print "Enumeration Pulling", item, item.name
+            self.pull_enumeration(item)
+            return
+        elif isinstance(item, typedesc.EnumValue):
+            #print "Enumeration Pulling", item, item.name
+            self.pull_enum_value(item)
             return
         elif isinstance(item, typedesc.Typedef):
             #print "Typedef Pulling", item, item.name
