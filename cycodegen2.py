@@ -306,9 +306,11 @@ def cy_generate(item):
         print "Item not handled", item
     #    raise ValueError, ("item not handled:", item)
 
-root = 'asoundlib'
+#root = 'asoundlib'
+root = 'foo'
 header_name = '%s.h' % root
-header_matcher = re.compile('alsa')
+#header_matcher = re.compile('alsa')
+header_matcher = re.compile(header_name)
 xml_name = '%s.xml' % root
 pyx_name = '_%s.pyx' % root
 if sys.platform[:7] == 'darwin':
@@ -318,7 +320,7 @@ else:
 
 items, named, locations = query_items(xml_name)
 funcs, tpdefs, enumvals, enums, structs, vars = \
-        classify(items, locations, ifilter=None)#header_matcher.search)
+        classify(items, locations, ifilter=header_matcher.search)
 
 arguments = signatures_types(funcs.values())
 print "Need to pull out arguments", [named[i] for i in arguments]
