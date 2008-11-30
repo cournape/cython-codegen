@@ -14,7 +14,7 @@ def pointer_decl(tp):
         return '%s *' % generic_decl(tp.typ)
 
 def struct_decl(tp):
-    return "struct %s" % tp.name
+    return "%s" % tp.name
 
 def struct_def(tp, indent=None):
     output = ['struct %s:' % tp.name]
