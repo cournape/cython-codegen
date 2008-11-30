@@ -44,9 +44,6 @@ enums = {}
 structs = {}
 vars = {}
 
-# List of items used as function argument
-arguments = {}
-
 # List of items we may use and can handle
 handled = {}
 
@@ -109,25 +106,28 @@ def signature_types(func):
 
     return types
 
+# Set of items used as function argument
+arguments = set()
+
 for name, f in funcs.items():
     types = signature_types(f)
     for t in types:
         ut = find_unqualified_type(t)
         if ut in items:
-            arguments[ut] = None
+            arguments.add(ut)
 
-print "Need to pull out arguments", arguments.keys()
+print "Need to pull out arguments", arguments
 
 from cytypes import generic_decl, generic_def
 
 print "========== declarations ============="
-for a in arguments.keys():
+for a in arguments:
     print generic_decl(a)
     #if isinstance(a, typedesc.Typedef):
     #    print generic_decl(a.typ)
 
 print "========== definitions ============="
-for a in arguments.keys():
+for a in arguments:
     print generic_def(a)
     if isinstance(a, typedesc.Typedef):
         print generic_def(a.typ)
