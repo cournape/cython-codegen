@@ -293,6 +293,11 @@ def cy_generate_function(func):
     return ["%s %s(%s)" % (generic_as_arg(func.returns), 
             func.name, ", ".join(args))]
 
+def cy_generate_enum_value(tp):
+    output = ['cdef enum:']
+    output.append("\t%s = %d" % (tp.name, int(tp.value)))
+    return output
+
 def cy_generate(item):
     if isinstance(item, typedesc.Typedef):
         #print "Typedef Generating", item
@@ -303,6 +308,9 @@ def cy_generate(item):
     elif isinstance(item, typedesc.Function):
         #print "FunctionType Generating", item
         return cy_generate_function(item)
+    elif isinstance(item, typedesc.EnumValue):
+        #print "FunctionType Generating", item
+        return cy_generate_enum_value(item)
     else:
         print "Item not handled", item
     #    raise ValueError, ("item not handled:", item)
@@ -334,7 +342,7 @@ needed = puller.values()
 print "Pulled out items:", [named[i] for i in needed]
 
 # List of items to generate code for
-gen = list(needed) + funcs.values()
+gen = enumvals.values() + list(needed) + funcs.values()
 gen_names = [named[i] for i in gen]
 
 cython_code = [cy_generate(i) for i in gen]
