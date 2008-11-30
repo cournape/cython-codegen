@@ -36,6 +36,11 @@ struct yoyo5_tag {
         int a;
 };
 
+/* try recursive structure */
+struct yoyo6 {
+        struct yoyo6* head;
+};
+
 /*
  * Function declarations
  */
@@ -78,5 +83,6 @@ void mega_struct_foo(struct yoyo*);
 void mega_struct_foo2(struct yoyo2*);
 void mega_struct_foo4(yoyo4*);
 void mega_struct_foo5(yoyo5*);
+void mega_struct_foo6(yoyo6*);
 
 #endif
