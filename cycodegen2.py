@@ -366,6 +366,8 @@ cython_code = [cy_generate(i) for i in gen]
 output = open(pyx_name, 'w')
 output.write("cdef extern from '%s':\n" % header_name)
 for i in cython_code:
+    if not i:
+        continue
     if len(i) > 1:
         output.write("\t%s\n" % i[0])
         for j in i[1:]:
