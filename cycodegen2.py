@@ -293,7 +293,7 @@ for i in cython_code:
     if len(i) > 1:
         output.write("\t%s\n" % i[0])
         for j in i[1:]:
-            output.write("\t\t%s\n" % j)
+            output.write("\t%s\n" % j)
     else:
         output.write("\t%s\n" % i[0])
 output.close()
