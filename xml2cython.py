@@ -71,16 +71,9 @@ def main(argv=None):
         elif o in ("-o", "--output"):
             output = a
 
-    #if output is None:
-    #    out = sys.stdout
-    #else:
-    #    out = open(output, 'w')
     from cStringIO import StringIO
     out = StringIO()
 
-    #print "Parsing file", xml_input
-    #print "Using header", header_input
-    #print "Outputing to", out
     try:
         generate_main(header_input, xml_input, out)
         if output:
