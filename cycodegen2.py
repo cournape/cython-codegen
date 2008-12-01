@@ -317,13 +317,13 @@ def cy_generate_enum_value(tp):
 
 def cy_generate(item):
     if isinstance(item, typedesc.Typedef):
-        #print "Typedef Generating", item
+        #print "Typedef Generating", item, item.name
         return cy_generate_typedef(item)
     elif isinstance(item, typedesc.Structure):
-        #print "Struct Generating", item
+        #print "Struct Generating", item, item.name
         return cy_generate_structure(item)
     elif isinstance(item, typedesc.Function):
-        #print "FunctionType Generating", item
+        #print "FunctionType Generating", item, item.name
         return cy_generate_function(item)
     elif isinstance(item, typedesc.EnumValue):
         #print "FunctionType Generating", item
