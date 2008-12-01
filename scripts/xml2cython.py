@@ -25,9 +25,9 @@ try:
 except ImportError:
     from StringIO import StringIO
 
-from tp_puller import TypePuller
-from misc import classify, query_items
-from cycodegen import generate_cython
+from cycodegenlib.tp_puller import TypePuller
+from cycodegenlib.misc import classify, query_items
+from cycodegenlib.cycodegen import generate_cython
 
 def generate_main(header, xml, output, lfilter=None, ffilter=None, funcs_list=None):
     items, named, locations = query_items(xml)
