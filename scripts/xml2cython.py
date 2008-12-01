@@ -25,6 +25,7 @@ try:
 except ImportError:
     from StringIO import StringIO
 
+import cycodegenlib
 from cycodegenlib.tp_puller import TypePuller
 from cycodegenlib.misc import classify, query_items
 from cycodegenlib.cycodegen import generate_cython
@@ -76,10 +77,10 @@ def main(argv=None):
     # parse command line options
     try:
         try:
-            opts, args = getopt.getopt(argv[1:], "ho:l:f:i:",
+            opts, args = getopt.getopt(argv[1:], "ho:l:f:i:V",
                                        ["help", "output", "location-filter",
                                         "function-name-filter",
-                                        "input-file-filter"])
+                                        "input-file-filter", "--version"])
         except getopt.error, msg:
             raise Usage(msg)
     except Usage, e:
@@ -104,6 +105,9 @@ def main(argv=None):
             ffilter_str = a
         elif o in ("-i", "--input-file-filter"):
             ifilter = a
+        elif o in ("-V", "--version"):
+            print "xml2cython: use cycodegenlib version", cycodegenlib.version
+            return 0
 
     if len(args) != 2:
         print >>sys.stderr, "Error, exactly one input file must be specified"
