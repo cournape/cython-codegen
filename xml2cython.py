@@ -7,6 +7,7 @@ Usage:
 By default, xml2cython pull out every function available in the xmlfile."""
 import getopt
 import sys
+import re
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -16,13 +17,13 @@ from tp_puller import TypePuller
 from misc import classify, query_items
 from cycodegen import generate_cython
 
-def generate_main(header, xml, output):
+def generate_main(header, xml, output, lfilter=None):
     items, named, locations = query_items(xml)
 
     output.write("cdef extern from '%s':\n" % header)
 
     funcs, tpdefs, enumvals, enums, structs, vars, unions = \
-            classify(items, locations)
+            classify(items, locations, ifilter=lfilter)
 
     puller = TypePuller(items)
     for f in funcs.values():
@@ -54,7 +55,8 @@ def main(argv=None):
     # parse command line options
     try:
         try:
-            opts, args = getopt.getopt(argv[1:], "ho:", ["help", "output"])
+            opts, args = getopt.getopt(argv[1:], "ho:l:",
+                                       ["help", "output", "location-filter"])
             if len(args) != 2:
                 raise Usage("Error, exactly one input file must be specified")
             header_input = args[0]
@@ -68,17 +70,23 @@ def main(argv=None):
 
     # process options
     output = None
+    lfilter_str = None
     for o, a in opts:
         if o in ("-h", "--help"):
             print __doc__
             return 0
         elif o in ("-o", "--output"):
             output = a
+        elif o in ("-l", "--location-filter"):
+            lfilter_str = a
+
+    if lfilter_str:
+        lfilter = re.compile(lfilter_str).search
 
     # Generate cython code
     out = StringIO()
     try:
-        generate_main(header_input, xml_input, out)
+        generate_main(header_input, xml_input, out, lfilter=lfilter)
         if output:
             f = open(output, 'w')
             try:
