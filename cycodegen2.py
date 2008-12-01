@@ -285,13 +285,13 @@ def cy_generate_typedef(item):
 
 def cy_generate_structure(tp):
     output = ['cdef struct %s:' % tp.name]
-    for f in tp.members:
-        if isinstance(f, typedesc.Field):
-            output.append("\t%s %s" % (generic_decl(f.typ), f.name))
-        elif isinstance(f, typedesc.Structure):
-            output.append("\t%s" % generic_decl(f))
+    for m in tp.members:
+        if isinstance(m, typedesc.Field):
+            output.append("\t%s %s" % (generic_decl(m.typ), m.name))
+        elif isinstance(m, typedesc.Structure):
+            output.append("\t%s" % generic_decl(m))
         else:
-            print "Struct member not handled:", f
+            print "Struct member not handled:", m
     if not tp.members:
         output.append("\tpass")
 
