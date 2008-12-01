@@ -9,6 +9,9 @@ def fundamental_as_arg(tp):
 def structure_as_arg(tp):
     return tp.name
 
+def union_as_arg(tp):
+    return tp.name
+
 def pointer_as_arg(tp):
     if isinstance(tp.typ, typedesc.FunctionType):
         args = [generic_as_arg(arg) for arg in tp.typ.iterArgTypes()]
@@ -31,6 +34,8 @@ def generic_as_arg(tp):
         return generic_as_arg(tp.typ)
     elif isinstance(tp, typedesc.Structure):
         return structure_as_arg(tp)
+    elif isinstance(tp, typedesc.Union):
+        return union_as_arg(tp)
     elif isinstance(tp, typedesc.Enumeration):
         return "int"
     else:
