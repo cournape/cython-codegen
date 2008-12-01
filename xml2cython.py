@@ -57,7 +57,7 @@ def main(argv=None):
         try:
             opts, args = getopt.getopt(argv[1:], "ho:l:f:",
                                        ["help", "output", "location-filter",
-                                        "function-name-filter"]
+                                        "function-name-filter"])
             if len(args) != 2:
                 raise Usage("Error, exactly one input file must be specified")
             header_input = args[0]
