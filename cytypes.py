@@ -68,6 +68,8 @@ def generic_named_decl(tp):
         return generic_named_decl(tp.typ)
     elif isinstance(tp, typedesc.Structure):
         return tp.name + ' %s'
+    elif isinstance(tp, typedesc.Union):
+        return tp.name + ' %s'
     elif isinstance(tp, typedesc.Enumeration):
         return tp.name + ' %s'
 
