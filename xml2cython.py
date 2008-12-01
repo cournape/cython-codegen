@@ -55,8 +55,9 @@ def main(argv=None):
     # parse command line options
     try:
         try:
-            opts, args = getopt.getopt(argv[1:], "ho:l:",
-                                       ["help", "output", "location-filter"])
+            opts, args = getopt.getopt(argv[1:], "ho:l:f:",
+                                       ["help", "output", "location-filter",
+                                        "function-name-filter"]
             if len(args) != 2:
                 raise Usage("Error, exactly one input file must be specified")
             header_input = args[0]
@@ -71,6 +72,7 @@ def main(argv=None):
     # process options
     output = None
     lfilter_str = None
+    ffilter_str = None
     for o, a in opts:
         if o in ("-h", "--help"):
             print __doc__
@@ -79,9 +81,14 @@ def main(argv=None):
             output = a
         elif o in ("-l", "--location-filter"):
             lfilter_str = a
+        elif o in ("-f", "--function-name-filter"):
+            ffilter_str = a
 
     if lfilter_str:
         lfilter = re.compile(lfilter_str).search
+
+    if ffilter_str:
+        ffilter = re.compile(ffilter_str).search
 
     # Generate cython code
     out = StringIO()
