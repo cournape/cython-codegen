@@ -41,3 +41,18 @@ def generic_as_arg(tp):
     else:
         print "Argument not handled in generic_as_arg", tp
         return None
+
+def find_unqualified_type(tp):
+    if isinstance(tp, typedesc.FundamentalType) or \
+       isinstance(tp, typedesc.Structure) or \
+       isinstance(tp, typedesc.Union) or \
+       isinstance(tp, typedesc.Enumeration) or \
+       isinstance(tp, typedesc.Typedef):
+        return tp
+    elif isinstance(tp, typedesc.CvQualifiedType) or \
+         isinstance(tp, typedesc.PointerType):
+        return find_unqualified_type(tp.typ)
+    elif isinstance(tp, typedesc.FunctionType):
+        return None
+    else:
+        raise ValueError("Unhandled type %s" % str(tp))
