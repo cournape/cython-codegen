@@ -11,9 +11,10 @@ def generate_cython(output, genitems, enumvals):
     # Generate the cython code
     cython_code = [cy_generate(i) for i in genitems]
 
-    output.write("\tcdef enum:\n")
-    for i in enumvals:
-        output.write("\t\t%s = %d\n" % (i.name, int(i.value)))
+    if enumvals:
+        output.write("\tcdef enum:\n")
+        for i in enumvals:
+            output.write("\t\t%s = %d\n" % (i.name, int(i.value)))
     for i in cython_code:
         if not i:
             continue
