@@ -59,10 +59,6 @@ def main(argv=None):
             opts, args = getopt.getopt(argv[1:], "ho:l:f:",
                                        ["help", "output", "location-filter",
                                         "function-name-filter"])
-            if len(args) != 2:
-                raise Usage("Error, exactly one input file must be specified")
-            header_input = args[0]
-            xml_input = args[1]
         except getopt.error, msg:
             raise Usage(msg)
     except Usage, e:
@@ -84,6 +80,14 @@ def main(argv=None):
             lfilter_str = a
         elif o in ("-f", "--function-name-filter"):
             ffilter_str = a
+
+    if len(args) != 2:
+        print >>sys.stderr, "Error, exactly one input file must be specified"
+        print >>sys.stderr, "for help use --help"
+        return 2
+
+    header_input = args[0]
+    xml_input = args[1]
 
     if lfilter_str:
         lfilter = re.compile(lfilter_str).search
