@@ -67,8 +67,10 @@ def generic_named_decl(tp):
         return generic_named_decl(tp.typ)
     elif isinstance(tp, typedesc.Structure):
         return tp.name + ' %s'
-    else:
-        print "Not handled in generic_named_decl: ", tp
+    elif isinstance(tp, typedesc.Enumeration):
+        return tp.name + ' %s'
+
+    raise ValueError(("Not handled in generic_named_decl: ", tp))
 
 def generic_def(tp):
     if isinstance(tp, typedesc.Typedef):
