@@ -158,20 +158,19 @@ class TypePuller:
         if not item in self._done:
             self._done.add(item)
             for m in item.members:
-                f = m.typ
-                # XXX: ugly hack. Cython does not support structures with
-                # members refering to itself through a typedef, so we
-                # "untypedef" the member
-                if isinstance(f, typedesc.PointerType) \
-                   and isinstance(f.typ, typedesc.Typedef) \
-                   and isinstance(f.typ.typ, typedesc.Structure) \
-                   and f.typ.typ == item:
-                    newf = copy.deepcopy(f)
-                    newf.typ = newf.typ.typ
-                    m.typ = newf
-                g = self.pull(m)
-                if g:
-                    self._items.append(pull(m))
+                if isinstance(m, typedesc.Field):
+                    f = m.typ
+                    # XXX: ugly hack. Cython does not support structures with
+                    # members refering to itself through a typedef, so we
+                    # "untypedef" the member if we detect such a case
+                    if isinstance(f, typedesc.PointerType) \
+                       and isinstance(f.typ, typedesc.Typedef) \
+                       and isinstance(f.typ.typ, typedesc.Structure) \
+                       and f.typ.typ == item:
+                        newf = copy.deepcopy(f)
+                        newf.typ = newf.typ.typ
+                        m.typ = newf
+                self.pull(m)
             self._items.append(item)
 
     def pull_union(self, item):
