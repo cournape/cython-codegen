@@ -47,6 +47,10 @@ struct yoyo7 {
         void (*destroy)(int);
 };
 
+struct yoyo9 {
+        foo2_int32_t a;
+};
+
 /*
  * Function declarations
  */
@@ -101,5 +105,6 @@ void mega_struct_foo5(yoyo5*);
 void mega_struct_foo6(yoyo6*);
 void mega_struct_foo7(struct yoyo7*);
 void mega_struct_foo8(struct yoyo8*);
+void mega_struct_foo9(struct yoyo9*);
 
 #endif
