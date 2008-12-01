@@ -69,17 +69,6 @@ def classify(items, locations, ifilter=None):
 
     return funcs, tpdefs, enumvals, enums, structs, unions, vars
 
-def find_named_type(tp):
-    if hasattr(tp, 'name'):
-        return tp.name
-    elif isinstance(tp, typedesc.CvQualifiedType) or \
-         isinstance(tp, typedesc.PointerType):
-        return find_named_type(tp.typ)
-    elif isinstance(tp, typedesc.FunctionType):
-        return None
-    else:
-        raise ValueError("Unhandled type %s" % str(tp))
-
 def instance_puller(tp, all):
     p = TypePuller(all)
     p.pull(tp)
