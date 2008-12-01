@@ -29,7 +29,7 @@ from tp_puller import TypePuller
 from misc import classify, query_items
 from cycodegen import generate_cython
 
-def generate_main(header, xml, output, lfilter=None, ffilter=None):
+def generate_main(header, xml, output, lfilter=None, ffilter=None, funcs_list=None):
     items, named, locations = query_items(xml)
 
     output.write("cdef extern from '%s':\n" % header)
@@ -68,9 +68,10 @@ def main(argv=None):
     # parse command line options
     try:
         try:
-            opts, args = getopt.getopt(argv[1:], "ho:l:f:",
+            opts, args = getopt.getopt(argv[1:], "ho:l:f:i:",
                                        ["help", "output", "location-filter",
-                                        "function-name-filter"])
+                                        "function-name-filter",
+                                        "input-file-filter"])
         except getopt.error, msg:
             raise Usage(msg)
     except Usage, e:
@@ -82,6 +83,7 @@ def main(argv=None):
     output = None
     lfilter_str = None
     ffilter_str = None
+    ifilter = None
     for o, a in opts:
         if o in ("-h", "--help"):
             print __doc__
@@ -92,6 +94,8 @@ def main(argv=None):
             lfilter_str = a
         elif o in ("-f", "--function-name-filter"):
             ffilter_str = a
+        elif o in ("-i", "--input-file-filter"):
+            ifilter = a
 
     if len(args) != 2:
         print >>sys.stderr, "Error, exactly one input file must be specified"
@@ -107,11 +111,20 @@ def main(argv=None):
     if ffilter_str:
         ffilter = re.compile(ffilter_str).search
 
+    # Input file filter
+    funcs = []
+    if ifilter:
+        a = open(ifilter, 'r')
+        try:
+            funcs.extend(a.read().splitlines())
+        finally:
+            a.close()
+
     # Generate cython code
     out = StringIO()
     try:
         generate_main(header_input, xml_input, out, lfilter=lfilter,
-                      ffilter=ffilter)
+                      ffilter=ffilter, funcs_list=funcs)
         if output:
             f = open(output, 'w')
             try:
