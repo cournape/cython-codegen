@@ -6,8 +6,9 @@ automatically.
 Dependencies
 ============
 
-- python, gccxml (recent build >= 0.9 from CVS) and codegenlib from
-  ctypeslib
+- python
+- gccxml (recent build >= 0.9 from CVS)
+- codegenlib from ctypeslib
 
 Usage
 =====
@@ -55,6 +56,11 @@ Many C declarations are not supported by cython (for example complex numbers)
 and no check is made that xml2cython generates valid cython code. Any header
 file which crashes xml2cython is a bug, but a non-buildable cython file may not
 be.
+
+Another problem is that the query system is limited, meaning the generated
+files are quickly very big, hence slow to compile with cython. I am adding a
+few filters capabilities (to filter on function names, file origin, etc...),
+but it is unlikely to get fancy.
 
 That being said, xml2cython is useful :) It can generate valid code for non
 trivial header (I am using it successfully to wrap alsa - a C api with > 1000
