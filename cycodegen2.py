@@ -118,6 +118,11 @@ class TypePuller:
         self._all = all
         self._done = set()
 
+        # This list contains a list of struct names for which the puller will
+        # not pull the members. This is an hack to avoid some cycle in
+        # recursives structs declarations which refer one to each other.
+        self._STRUCTS_IGNORE = ['_IO_FILE', '_IO_marker', 'yoyo11', 'yoyo12']
+
     def pull_fundamental(self, item):
         pass
 
@@ -157,20 +162,26 @@ class TypePuller:
         #names.append(item.name)
         if not item in self._done:
             self._done.add(item)
-            for m in item.members:
-                if isinstance(m, typedesc.Field):
-                    f = m.typ
-                    # XXX: ugly hack. Cython does not support structures with
-                    # members refering to itself through a typedef, so we
-                    # "untypedef" the member if we detect such a case
-                    if isinstance(f, typedesc.PointerType) \
-                       and isinstance(f.typ, typedesc.Typedef) \
-                       and isinstance(f.typ.typ, typedesc.Structure) \
-                       and f.typ.typ == item:
-                        newf = copy.deepcopy(f)
-                        newf.typ = newf.typ.typ
-                        m.typ = newf
-                self.pull(m)
+            if item.name in self._STRUCTS_IGNORE:
+                # XXX: hack. We remove all members of the ignored structures,
+                # to generate an opaque structure in the code genrator.
+                print "Ignoring", item, item.name
+                item.members = []
+            else:
+                for m in item.members:
+                    if isinstance(m, typedesc.Field):
+                        f = m.typ
+                        # XXX: ugly hack. Cython does not support structures
+                        # with members refering to itself through a typedef, so
+                        # we "untypedef" the member if we detect such a case
+                        if isinstance(f, typedesc.PointerType) \
+                           and isinstance(f.typ, typedesc.Typedef) \
+                           and isinstance(f.typ.typ, typedesc.Structure) \
+                           and f.typ.typ == item:
+                            newf = copy.deepcopy(f)
+                            newf.typ = newf.typ.typ
+                            m.typ = newf
+                    self.pull(m)
             self._items.append(item)
 
     def pull_union(self, item):
