@@ -1,5 +1,7 @@
 from distutils.core import setup, Command
 
+from cycodegenlib import version
+
 setup(name="cython-codegen",
         packages = ['cycodegenlib'],
         scripts = ['scripts/xml2cython.py'],
@@ -8,6 +10,6 @@ setup(name="cython-codegen",
         author="David Cournapeau",
         #author_email="",
         license="MIT License",
-        version = "0.2")
+        version = version)
         #classifiers = classifiers,
         #zip_safe = True)
