@@ -1,0 +1,80 @@
+This is a small package to generate cython code from header file: instead of
+having to write all the function declarations and structures by yourself,
+xml2cython can use gccxml output files to generate all the declarations
+automatically.
+
+Dependencies
+============
+
+- python, gccxml (recent build >= 0.9 from CVS) and codegenlib from
+  ctypeslib
+
+Usage
+=====
+
+Say you have a header foo.h you want to wrap with cython. First, you need to
+generate an xml file from gccxml. You can use the h2xml script from ctypelibs:
+
+        h2xml -I. foo.h -o foo.xml
+
+You can then generate the cython file with xml2cython:
+
+        xml2cython.py -l 'foo' foo.h foo.xml
+
+This tells xml2cython to generate a cython file from foo.xml, originating from
+foo.h by gccxml, and to only pull items whose location match the string foo.
+
+Location
+========
+
+By default, xml2cython pull out every function in the xml file, and every
+'dependency' (necessary to generate correct cython function declarations). This
+is likely to generate invalid cython code because of compilers intrisincs and
+so on, so you should filter the items pulled out from the xml file.
+
+Location is a gccxml 'concept' related to the origin of each item in the parsed
+tree built by gccxml. Location refers to both file and line location for each C
+item (structure, typedef, function declaration, etc...). Simply using the -l
+option of xml2cython on the name of the header file hence will only pull
+functions declared in that file. You can also use a regex, which will be
+matched against the file location of each item.
+
+If you need more control, you will likely need to do it by yourself.
+
+Caveat
+======
+
+Limitations
+-----------
+
+Many. xml2cython is nothing more than an hack to avoid writing by hand cython
+files to wrap large API. Since I know nothing about compilers and parsing, it
+is likely that the implementation makes you laugh, too.
+
+Many C declarations are not supported by cython (for example complex numbers)
+and no check is made that xml2cython generates valid cython code. Any header
+file which crashes xml2cython is a bug, but a non-buildable cython file may not
+be.
+
+That being said, xml2cython is useful :) It can generate valid code for non
+trivial header (I am using it successfully to wrap alsa - a C api with > 1000
+functions, hundred of typedefs and structures as well as CoreAudio on Mac OS
+X).
+
+C vs C++
+--------
+
+Unfortunately, gccxml only parses C++ files. So if your header is not C++
+compatible, it will not work. No C++ concept is supported by xml2cython, most
+of them are removed from the AST by xml2cython to avoid conflict with cython
+(which does not support C++ constructs either).
+
+LICENSE
+=======
+
+The code is under MIT license (See LICENSE). I don't care about the code I
+wrote myself (all the code in this package except gccxmlparser.py): I can
+license it do any license you want if you request it. The only reason why I
+used this is because I use some code from ctypeslib, under the MIT. If the
+license is not acceptable, you should rewrite the parts which depend on
+ctypeslib (mostly gccxmlparse as well as type descriptors)/
