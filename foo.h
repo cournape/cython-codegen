@@ -41,6 +41,12 @@ struct yoyo6 {
         struct yoyo6* head;
 };
 
+/* structures with function pointers variables */
+struct yoyo7 {
+        void (*init)();
+        void (*destroy)(int);
+};
+
 /*
  * Function declarations
  */
@@ -87,5 +93,6 @@ void mega_struct_foo3(yoyo3*);
 void mega_struct_foo4(yoyo4*);
 void mega_struct_foo5(yoyo5*);
 void mega_struct_foo6(yoyo6*);
+void mega_struct_foo7(struct yoyo7*);
 
 #endif
