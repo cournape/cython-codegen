@@ -23,7 +23,7 @@ def generate_main(header, xml, output, lfilter=None):
     output.write("cdef extern from '%s':\n" % header)
 
     funcs, tpdefs, enumvals, enums, structs, vars, unions = \
-            classify(items, locations, ifilter=lfilter)
+            classify(items, locations, lfilter=lfilter)
 
     puller = TypePuller(items)
     for f in funcs.values():
@@ -118,7 +118,7 @@ if __name__ == '__main__':
 #
 # items, named, locations = query_items(xml_name)
 # funcs, tpdefs, enumvals, enums, structs, vars, unions = \
-#         classify(items, locations, ifilter=header_matcher.search)
+#         classify(items, locations, lfilter=header_matcher.search)
 #
 # #arguments = signatures_types(funcs.values())
 # #print "Need to pull out arguments", [named[i] for i in arguments]

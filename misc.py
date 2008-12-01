@@ -22,7 +22,7 @@ def query_items(xml):
 
     return keep, named, locations
 
-def classify(items, locations, ifilter=None):
+def classify(items, locations, lfilter=None):
     # Dictionaries name -> typedesc instances
     funcs = {}
     tpdefs = {}
@@ -32,13 +32,13 @@ def classify(items, locations, ifilter=None):
     vars = {}
     unions = {}
 
-    if ifilter is None:
-        ifilter = lambda x : True
+    if lfilter is None:
+        lfilter = lambda x : True
 
     for it in items:
         try:
             origin = locations[it][0]
-            if ifilter(origin):
+            if lfilter(origin):
                 if isinstance(it, typedesc.Function):
                     funcs[it.name] = it
                 elif isinstance(it, typedesc.EnumValue):
