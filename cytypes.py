@@ -49,6 +49,27 @@ def generic_decl(tp):
     else:
         print "Not handled: ", tp
 
+def pointer_named_decl(tp):
+    if isinstance(tp.typ, typedesc.FunctionType):
+        args = [generic_decl(arg) for arg in tp.typ.iterArgTypes()]
+        return generic_decl(tp.typ.returns) + '(*%s)' + '(%s)' % ", ".join(args)
+    else:
+        return generic_decl(tp.typ) + ' * %s'
+
+def generic_named_decl(tp):
+    """Return a template string, for named parameters (e.g. in structs)."""
+    if isinstance(tp, typedesc.FundamentalType):
+        return tp.name + ' %s'
+    elif isinstance(tp, typedesc.PointerType) \
+        or isinstance(tp, typedesc.ArrayType):
+        return pointer_named_decl(tp)
+    elif isinstance(tp, typedesc.CvQualifiedType):
+        return generic_named_decl(tp.typ)
+    elif isinstance(tp, typedesc.Structure):
+        return tp.name + ' %s'
+    else:
+        print "Not handled in generic_named_decl: ", tp
+
 def generic_def(tp):
     if isinstance(tp, typedesc.Typedef):
         return typedef_def(tp)

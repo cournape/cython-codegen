@@ -6,7 +6,7 @@ from gccxmlparser import parse
 from ctypeslib.codegen import typedesc
 from codegenlib import Func, parse_type
 from funcs import generic_as_arg
-from cytypes import generic_decl
+from cytypes import generic_decl, generic_named_decl
 
 def query_items(xml, filter=None):
     # XXX: support filter
@@ -287,7 +287,7 @@ def cy_generate_structure(tp):
     output = ['cdef struct %s:' % tp.name]
     for m in tp.members:
         if isinstance(m, typedesc.Field):
-            output.append("\t%s %s" % (generic_decl(m.typ), m.name))
+            output.append("\t" + (generic_named_decl(m.typ) % m.name))
         elif isinstance(m, typedesc.Structure):
             output.append("\t%s" % generic_decl(m))
         else:
