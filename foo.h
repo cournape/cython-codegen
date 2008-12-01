@@ -58,6 +58,17 @@ struct yoyo10_tag {
         yoyo10 *a;
 };
 
+/* yoyo11 and yoyo12 refer to each other */
+struct yoyo12; /* forward declaration */
+
+struct yoyo11 {
+        struct yoyo12 *a;
+};
+
+struct yoyo12 {
+        struct yoyo11 *a;
+};
+
 /*
  * Union
  */
@@ -125,6 +136,8 @@ void mega_struct_foo7(struct yoyo7*);
 void mega_struct_foo8(struct yoyo8*);
 void mega_struct_foo9(struct yoyo9*);
 void mega_struct_foo10(yoyo10*);
+void mega_struct_foo11(struct yoyo11*);
+void mega_struct_foo12(struct yoyo12*);
 
 void mega_union_foo(union yuyu1*);
 void mega_union_foo2(union yuyu2*);
