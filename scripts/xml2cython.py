@@ -10,10 +10,10 @@ are some basic filter you can use to limit the functions pulled out:
       given string.
     - -l/--location-filter: only pull out function which are declared in a file
       whose name matches the given string.
-      
+
 Example:
     xml2cython -f 'foo_' -l 'foo' header xmlfile
-    
+
     Will only pull out functions whose name match foo_ and which are declared
     in file whose name match foo. Using regular expression instead of simple
     strings should work"""
