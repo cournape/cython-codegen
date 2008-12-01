@@ -58,7 +58,8 @@ def pointer_named_decl(tp):
 
 def generic_named_decl(tp):
     """Return a template string, for named parameters (e.g. in structs)."""
-    if isinstance(tp, typedesc.FundamentalType):
+    if isinstance(tp, typedesc.FundamentalType) or \
+       isinstance(tp, typedesc.Typedef):
         return tp.name + ' %s'
     elif isinstance(tp, typedesc.PointerType) \
         or isinstance(tp, typedesc.ArrayType):
