@@ -2,6 +2,12 @@ from distutils.core import setup, Command
 
 from cycodegenlib import version
 
+CLASSIFIERS = ['Development Status :: 1 - Planning',
+               'Intended Audience :: Developers',
+               'License :: OSI Approved :: MIT License',
+               'Programming Language :: Python',
+               'Topic :: Software Development :: Libraries :: Python Modules']
+
 setup(name="cython-codegen",
         packages = ['cycodegenlib'],
         scripts = ['scripts/xml2cython.py'],
@@ -10,6 +16,6 @@ setup(name="cython-codegen",
         author="David Cournapeau",
         #author_email="",
         license="MIT License",
-        version = version)
-        #classifiers = classifiers,
+        version = version,
+        classifiers = CLASSIFIERS,)
         #zip_safe = True)
