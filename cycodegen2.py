@@ -35,6 +35,7 @@ def classify(items, locations, ifilter=None):
     enums = {}
     structs = {}
     vars = {}
+    unions = {}
 
     if ifilter is None:
         ifilter = lambda x : True
@@ -55,6 +56,8 @@ def classify(items, locations, ifilter=None):
                     structs[it.name] = it
                 elif isinstance(it, typedesc.Variable):
                     vars[it.name] = it
+                elif isinstance(it, typedesc.Union):
+                    unions[it.name] = it
                 else:
                     print "Do not know how to classify", str(it)
         except KeyError:
@@ -63,7 +66,7 @@ def classify(items, locations, ifilter=None):
             else:
                 print "No location for item %s, ignoring" % str(it)
 
-    return funcs, tpdefs, enumvals, enums, structs, vars
+    return funcs, tpdefs, enumvals, enums, structs, unions, vars
 
 def find_named_type(tp):
     if hasattr(tp, 'name'):
@@ -356,7 +359,7 @@ else:
     so_name = 'lib%s.so' % root
 
 items, named, locations = query_items(xml_name)
-funcs, tpdefs, enumvals, enums, structs, vars = \
+funcs, tpdefs, enumvals, enums, structs, vars, unions = \
         classify(items, locations, ifilter=header_matcher.search)
 
 arguments = signatures_types(funcs.values())
