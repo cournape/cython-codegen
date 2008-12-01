@@ -284,8 +284,11 @@ def cy_generate_typedef(item):
     else:
         return ["ctypedef %s" % (named_pointer_decl(item.typ) % item.name)]
 
-def cy_generate_structure(tp):
-    output = ['cdef struct %s:' % tp.name]
+def cy_generate_structure(tp, union=False):
+    if union:
+        output = ['cdef union %s:' % tp.name]
+    else:
+        output = ['cdef struct %s:' % tp.name]
     for m in tp.members:
         if isinstance(m, typedesc.Field):
             output.append("\t" + (generic_named_decl(m.typ) % m.name))
@@ -322,6 +325,9 @@ def cy_generate(item):
     elif isinstance(item, typedesc.Structure):
         #print "Struct Generating", item, item.name
         return cy_generate_structure(item)
+    elif isinstance(item, typedesc.Union):
+        #print "Union Generating", item, item.name
+        return cy_generate_structure(item, union=True)
     elif isinstance(item, typedesc.Function):
         #print "FunctionType Generating", item, item.name
         return cy_generate_function(item)
