@@ -59,7 +59,7 @@ def generate_main(header, xml, output, lfilter=None, ffilter=None, funcs_list=No
     anoenumvals.sort(cmpenum)
 
     # List of items to generate code for
-    gen = list(needed) + kept_funcs
+    gen = list(needed) #+ kept_funcs
     generate_cython(output, gen, anoenumvals)
 
 class Usage(Exception):
