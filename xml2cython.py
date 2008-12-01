@@ -17,7 +17,7 @@ from tp_puller import TypePuller
 from misc import classify, query_items
 from cycodegen import generate_cython
 
-def generate_main(header, xml, output, lfilter=None):
+def generate_main(header, xml, output, lfilter=None, ffilter=None):
     items, named, locations = query_items(xml)
 
     output.write("cdef extern from '%s':\n" % header)
@@ -25,8 +25,9 @@ def generate_main(header, xml, output, lfilter=None):
     funcs, tpdefs, enumvals, enums, structs, vars, unions = \
             classify(items, locations, lfilter=lfilter)
 
+    kept_funcs = [i for i in funcs.values() if ffilter(i.name)]
     puller = TypePuller(items)
-    for f in funcs.values():
+    for f in kept_funcs:
         puller.pull(f)
 
     needed = puller.values()
@@ -38,7 +39,7 @@ def generate_main(header, xml, output, lfilter=None):
     anoenumvals.sort(cmpenum)
 
     # List of items to generate code for
-    gen = list(needed) + funcs.values()
+    gen = list(needed) + kept_funcs
     generate_cython(output, gen, anoenumvals)
 
 class Usage(Exception):
@@ -93,7 +94,8 @@ def main(argv=None):
     # Generate cython code
     out = StringIO()
     try:
-        generate_main(header_input, xml_input, out, lfilter=lfilter)
+        generate_main(header_input, xml_input, out, lfilter=lfilter,
+                      ffilter=ffilter)
         if output:
             f = open(output, 'w')
             try:
