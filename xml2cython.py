@@ -7,6 +7,10 @@ Usage:
 By default, xml2cython pull out every function available in the xmlfile."""
 import getopt
 import sys
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
 
 from tp_puller import TypePuller
 from misc import classify, query_items
@@ -71,9 +75,8 @@ def main(argv=None):
         elif o in ("-o", "--output"):
             output = a
 
-    from cStringIO import StringIO
+    # Generate cython code
     out = StringIO()
-
     try:
         generate_main(header_input, xml_input, out)
         if output:
