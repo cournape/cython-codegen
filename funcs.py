@@ -1,5 +1,7 @@
 from ctypeslib.codegen import typedesc
 
+from cytypes import generic_decl
+
 def typedef_as_arg(tp):
     return tp.name
 
@@ -56,3 +58,11 @@ def find_unqualified_type(tp):
         return None
     else:
         raise ValueError("Unhandled type %s" % str(tp))
+
+def named_pointer_decl(tp):
+    if isinstance(tp.typ, typedesc.FunctionType):
+        args = [generic_decl(arg) for arg in tp.typ.iterArgTypes()]
+        return generic_decl(tp.typ.returns) + '(*%s)' + '(%s)' % ", ".join(args)
+    else:
+        return generic_decl(tp.typ) + ' * %s'
+
