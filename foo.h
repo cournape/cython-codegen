@@ -52,6 +52,13 @@ struct yoyo9 {
 };
 
 /*
+ * Union
+ */
+union yuyu1 {
+        int a;
+};
+
+/*
  * Function declarations
  */
 double foo(double a);
@@ -107,4 +114,5 @@ void mega_struct_foo7(struct yoyo7*);
 void mega_struct_foo8(struct yoyo8*);
 void mega_struct_foo9(struct yoyo9*);
 
+void mega_union_foo(union yuyu1*);
 #endif
