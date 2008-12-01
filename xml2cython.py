@@ -37,7 +37,15 @@ def generate_main(header, xml, output, lfilter=None, ffilter=None, funcs_list=No
     funcs, tpdefs, enumvals, enums, structs, vars, unions = \
             classify(items, locations, lfilter=lfilter)
 
-    kept_funcs = [i for i in funcs.values() if ffilter(i.name)]
+    if ffilter is None:
+        ffilter = lambda x: True
+
+    if funcs_list:
+        kept_funcs = [i for i in funcs.values() if ffilter(i.name)  \
+                                                   and i.name in funcs_list]
+    else:
+        kept_funcs = [i for i in funcs.values() if ffilter(i.name)]
+
     puller = TypePuller(items)
     for f in kept_funcs:
         puller.pull(f)
@@ -105,9 +113,11 @@ def main(argv=None):
     header_input = args[0]
     xml_input = args[1]
 
+    lfilter = None
     if lfilter_str:
         lfilter = re.compile(lfilter_str).search
 
+    ffilter = None
     if ffilter_str:
         ffilter = re.compile(ffilter_str).search
 
