@@ -56,7 +56,7 @@ def classify(items, locations, ifilter=None):
                 elif isinstance(it, typedesc.Variable):
                     vars[it.name] = it
                 else:
-                    print "Do not know how to handle", str(it)
+                    print "Do not know how to classify", str(it)
         except KeyError:
             if isinstance(it, typedesc.EnumValue):
                 enumvals[it.name] = it
