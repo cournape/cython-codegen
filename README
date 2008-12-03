@@ -25,6 +25,29 @@ You can then generate the cython file with xml2cython:
 This tells xml2cython to generate a cython file from foo.xml, originating from
 foo.h by gccxml, and to only pull items whose location match the string foo.
 
+Filters
+=======
+
+By default, xml2cython pull out every function in the xml file, and every
+'dependency' (necessary to generate correct cython function declarations). This
+is likely to generate invalid cython code because of compilers intrisincs and
+so on, so you should filter the items pulled out from the xml file.
+
+That's why I implemented of couple of naive filters. For example, say you are
+only interested in declarations coming from one header file, like
+AudioHardware.h (a header file for CoreAudio framework on Mac OS X). You can
+then use:
+
+        xml2cython -l 'AudioHardware.h' CoreAudio/AudioHardware.h AudioHardware.xml
+
+Only functions, enumerations and typedefs coming from this file will be pulled
+out. You should be able to use regex (as understood by python regex enging) for
+the filter string. Programmatically, it is easy to filter depending on the type
+of the item (function, typedef, etc...) but I have not found an easy way to
+present this to the user, so you will need to do it by yourself: look at the
+cycodegenlib.cycodegen.classify and xml2cython.py generate_main functions to
+see how basic filtering works.
+
 Location
 ========
 
