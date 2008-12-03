@@ -28,6 +28,7 @@ def classify(items, locations, lfilter=None):
     tpdefs = {}
     enumvals = {}
     enums = {}
+    anoenums = {}
     structs = {}
     vars = {}
     unions = {}
@@ -44,7 +45,10 @@ def classify(items, locations, lfilter=None):
                 elif isinstance(it, typedesc.EnumValue):
                     enumvals[it.name] = it
                 elif isinstance(it, typedesc.Enumeration):
-                    enums[it.name] = it
+                    if it.name:
+                        enums[it.name] = it
+                    else:
+                        anoenums[it] = it
                 elif isinstance(it, typedesc.Typedef):
                     tpdefs[it.name] = it
                 elif isinstance(it, typedesc.Structure):
@@ -61,4 +65,4 @@ def classify(items, locations, lfilter=None):
             else:
                 print "No location for item %s, ignoring" % str(it)
 
-    return funcs, tpdefs, enumvals, enums, structs, unions, vars
+    return funcs, tpdefs, enumvals, enums, structs, unions, vars, anoenums

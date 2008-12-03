@@ -37,7 +37,7 @@ def generate_main(header, xml, output, lfilter=None, ffilter=None, funcs_list=No
 
     output.write("cdef extern from '%s':\n" % header)
 
-    funcs, tpdefs, enumvals, enums, structs, vars, unions = \
+    funcs, tpdefs, enumvals, enums, structs, vars, unions, anoenums = \
             classify(items, locations, lfilter=lfilter)
 
     if ffilter is None:
@@ -56,18 +56,7 @@ def generate_main(header, xml, output, lfilter=None, ffilter=None, funcs_list=No
     needed = puller.values()
 
     # Filter "anonymous" enumerations according to location
-    # XXX: we should do this in classify
-    from ctypeslib.codegen import typedesc
     if lfilter:
-        anoenums = {}
-        for it in items:
-            try:
-                origin = locations[it][0]
-                if lfilter(origin):
-                    if isinstance(it, typedesc.Enumeration):
-                        anoenums[it] = it
-            except KeyError:
-                pass
         anoenumvals = []
         for v in anoenums.values():
             anoenumvals.extend(v.values)
