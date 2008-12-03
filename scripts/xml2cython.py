@@ -55,10 +55,28 @@ def generate_main(header, xml, output, lfilter=None, ffilter=None, funcs_list=No
 
     needed = puller.values()
 
+    # Filter "anonymous" enumerations according to location
+    # XXX: we should do this in classify
+    from ctypeslib.codegen import typedesc
+    if lfilter:
+        anoenums = {}
+        for it in items:
+            try:
+                origin = locations[it][0]
+                if lfilter(origin):
+                    if isinstance(it, typedesc.Enumeration):
+                        anoenums[it] = it
+            except KeyError:
+                pass
+        anoenumvals = []
+        for v in anoenums.values():
+            anoenumvals.extend(v.values)
+    else:
+        anoenumvals = enumvals.values()
+
     # Order 'anonymous' enum values alphabetically
     def cmpenum(a, b):
         return cmp(a.name, b.name)
-    anoenumvals = enumvals.values()
     anoenumvals.sort(cmpenum)
 
     # List of items to generate code for
