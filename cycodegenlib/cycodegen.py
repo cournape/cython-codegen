@@ -41,6 +41,8 @@ def cy_generate_structure(tp, union=False):
             output.append("\t" + (generic_named_decl(m.typ) % m.name))
         elif isinstance(m, typedesc.Structure):
             output.append("\t%s" % generic_decl(m))
+        elif isinstance(m, typedesc.Ignored):
+            pass
         else:
             print "Struct member not handled:", m
     if not tp.members:

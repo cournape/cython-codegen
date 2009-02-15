@@ -1,4 +1,3 @@
-from ctypeslib.codegen.gccxmlparser import parse
 from ctypeslib.codegen import typedesc
 
 class Func:

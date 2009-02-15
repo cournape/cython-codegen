@@ -164,6 +164,8 @@ class TypePuller:
             #print "FunctionType Pulling", item
             self.pull_array_type(item)
             return
+        elif isinstance(item, typedesc.Ignored):
+            return
         else:
             raise ValueError, ("item not handled:", item)
 

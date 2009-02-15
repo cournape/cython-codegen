@@ -1,7 +1,7 @@
 from ctypeslib.codegen import typedesc
 
-#from ctypeslib.codegen.gccxmlparser import parse
-from gccxmlparser import parse
+from ctypeslib.codegen.gccxmlparser import parse
+#from gccxmlparser import parse
 
 def query_items(xml):
     # XXX: support filter
