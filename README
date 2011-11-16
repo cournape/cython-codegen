@@ -3,6 +3,10 @@ having to write all the function declarations and structures by yourself,
 xml2cython can use gccxml output files to generate all the declarations
 automatically.
 
+DISCLAIMER: I DON'T HAVE TIME TO SPEND ON THIS, AND YOU SHOULD CONSIDER IT UNSUPPORTED
+AT THAT POINT. A BETTER SOLUTION TO THE PROBLEM SOLVED BY CYTHON_CODEGEN WOULD BE
+SOMETHING BASED ON CLANG.
+
 Dependencies
 ============
 
